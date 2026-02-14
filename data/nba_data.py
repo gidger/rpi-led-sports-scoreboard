@@ -49,7 +49,7 @@ def get_games(date):
     # For each game, build a dict recording current game details.
     if games_json: # If games today.
         for game in games_json:
-            if 'All-Star' not in game['gameLabel'] and 'Preseason' not in game['gameLabel']: # This should leave regular season and playoff games.
+            if 'All-Star' not in game['gameLabel'] and 'Preseason' not in game['gameLabel'] and 'Rising Stars' not in game['gameLabel']: # This should leave regular season and playoff games.
                 games.append({
                     'game_id': game['gameId'],
                     'home_abrv': game['homeTeam']['teamTricode'],
