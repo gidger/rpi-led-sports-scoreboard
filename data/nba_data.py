@@ -2,6 +2,20 @@ from setup.session_setup import session
 from datetime import datetime as dt
 from datetime import timezone as tz
 
+stats_headers = {
+    'host': 'stats.nba.com',
+    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36',
+    'accept': 'application/json, text/plain, */*',
+    'accept-language': 'en-US,en;q=0.5',
+    'accept-encoding': 'gzip, deflate, br',
+    'connection': 'keep-alive',
+    'referer': 'https://www.nba.com/',
+    'pragma': 'no-cache',
+    'cache-control': 'no-cache',
+    'sec-ch-ua': '"Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-fetch-dest': 'empty'
+}
 
 def get_games(date):
     """ Loads NBA game data for the provided date.
@@ -29,20 +43,7 @@ def get_games(date):
     else:
         # Call the NBA game API for the date specified and store the JSON results.
         url = 'https://stats.nba.com/stats/scoreboardv3?LeagueID=00'    
-        headers = {
-            'host': "stats.nba.com",
-            'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
-            'accept': "application/json, text/plain, */*",
-            'accept-language': "en-US,en;q=0.5",
-            'accept-encoding': "gzip, deflate, br",
-            'connection': "keep-alive",
-            'referer': "https://stats.nba.com/",
-            'pragma': "no-cache",
-            'cache-control': "no-cache",
-            'sec-ch-ua': "\"Chromium\";v=\"140\", \"Google Chrome\";v=\"140\", \"Not;A=Brand\";v=\"24\"",
-            'sec-ch-ua-mobile': "?0",
-            'sec-fetch-dest': "empty"
-        }
+        headers = stats_headers
         games_response = session.get(url=f"{url}&GameDate={date.strftime(format='%Y-%m-%d')}", headers=headers)
         games_json = games_response.json()['scoreboard']['games']
 
@@ -94,20 +95,7 @@ def get_next_game(team):
     # Call the NBA schedule API for the team specified and store the JSON results.
     # TODO: Save these results to avoid multiple calls if multiple favorite teams are set.
     url = 'https://stats.nba.com/stats/scheduleleaguev2?LeagueID=00'   
-    headers = {
-        'host': "stats.nba.com",
-        'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
-        'accept': "application/json, text/plain, */*",
-        'accept-language': "en-US,en;q=0.5",
-        'accept-encoding': "gzip, deflate, br",
-        'connection': "keep-alive",
-        'referer': "https://stats.nba.com/",
-        'pragma': "no-cache",
-        'cache-control': "no-cache",
-        'sec-ch-ua': "\"Chromium\";v=\"140\", \"Google Chrome\";v=\"140\", \"Not;A=Brand\";v=\"24\"",
-        'sec-ch-ua-mobile': "?0",
-        'sec-fetch-dest': "empty"
-    }
+    headers = stats_headers
     schedule_response = session.get(url=f'{url}&Season={season}', headers=headers)
     schedule_json = schedule_response.json()['leagueSchedule']['gameDates']
 
@@ -152,20 +140,7 @@ def get_standings():
 
     # Call the NBA standings API and store the JSON results.
     url = 'https://stats.nba.com/stats/leaguestandingsv3?LeagueID=00&SeasonType=Regular Season'    
-    headers = {
-        'host': "stats.nba.com",
-        'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
-        'accept': "application/json, text/plain, */*",
-        'accept-language': "en-US,en;q=0.5",
-        'accept-encoding': "gzip, deflate, br",
-        'connection': "keep-alive",
-        'referer': "https://stats.nba.com/",
-        'pragma': "no-cache",
-        'cache-control': "no-cache",
-        'sec-ch-ua': "\"Chromium\";v=\"140\", \"Google Chrome\";v=\"140\", \"Not;A=Brand\";v=\"24\"",
-        'sec-ch-ua-mobile': "?0",
-        'sec-fetch-dest': "empty"
-    }
+    headers = stats_headers
     standings_response = session.get(url=f'{url}&Season={season}', headers=headers)
     standings_json_unprocessed = standings_response.json()['resultSets'][0]
 
