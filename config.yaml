@@ -1,149 +1,78 @@
-# The following scenes will be displayed in the order specified. Will loop once complete.
+# ==========================================================
+# F1 LED SCOREBOARD CONFIGURATION - 2026 SEASON
+# ==========================================================
+
+# Sequence of F1 scenes to display.
+# Available scenes:
+#   f1_next_race           - Upcoming race weekend info (date, circuit, round)
+#   f1_race_weekend        - Qualifying grid or race results (weekend-aware)
+#   f1_driver_standings    - WDC standings, scrolling
+#   f1_constructor_standings - WCC standings, scrolling
+#   f1_race_preview        - Starting-lights animation with race card
 scene_order:
-  - nhl_fav_team_next_game
-  - nba_fav_team_next_game
-  - pwhl_fav_team_next_game
-  - nhl_games
-  - nba_games
-  - pwhl_games
-  - nhl_fav_team_next_game
-  - nba_fav_team_next_game
-  - pwhl_fav_team_next_game
-  - nhl_standings
-  - nba_standings
-  - pwhl_standings
+  - f1_next_race
+  - f1_driver_standings
+  - f1_constructor_standings
+  - f1_race_weekend
+  - f1_race_preview
 
+# Personalization
+favourite_drivers:
+  - HAM   # Lewis Hamilton (Ferrari)
+  - NOR   # Lando Norris (McLaren)
 
-# Note your favourite teams by league. Any number of teams can be specified.
-favourite_teams:
-  nhl:
-    # - BOS # Example.
-  nba:
-    # - TOR # Example.
-  pwhl:
-    # - TOR # Example.
-
-
-# Note alt logos that should be used. Any number of teams can have an alt logo, but each team is limited to a single alt logo at a time.
-alt_logos:
-  nhl:
-    # LAK: 2019 # Example.
-  nba:
-    # UTA: 2004 # Example.
-  pwhl:
-    # TOR: 2024 # Example. There's no alt logos for PWHL yet. Including this here for future use.
-
-
-# Settings for each scene.
+# Scene-level settings
 scene_settings:
-  nhl:
-    games: # nhl_games scene.
+  f1:
+    # --- Next Race scene ---
+    next_race:
       transition: 'modern'
       splash:
         display_splash: True
         splash_display_duration: 2
-      game_display_duration: 3.5
-      score_alerting:
-        score_coloured: true
-        score_fade_animation: true
-      rollover:
-        rollover_start_time_local: '07:00'
-        show_completed_games_until_rollover_end_time: True
-        rollover_end_time_local: '12:00'
+      display_duration: 6          # seconds per page (circuit / schedule)
 
-    fav_team_next_game: # nhl_fav_team_next_game scene.
+    # --- Race Weekend scene (quali grid + race results) ---
+    race_weekend:
       transition: 'modern'
-      display_duration: 3.5
-      display_if_in_progress: False
+      splash:
+        display_splash: True
+        splash_display_duration: 2
+      driver_display_duration: 3   # seconds each driver row is highlighted
 
-    standings: # nhl_standings scene.
+    # --- Driver Standings scene ---
+    driver_standings:
+      transition: 'modern'
+      splash:
+        display_splash: True
+        splash_display_duration: 2
+      highlight_fav_drivers: True
+      scroll:
+        scroll_frame_duration: 0.075
+        scroll_pause_duration: 1.0
+
+    # --- Constructor Standings scene ---
+    constructor_standings:
       transition: 'modern'
       splash:
         display_splash: True
         splash_display_duration: 2
       scroll:
-        scroll_pause_duration: 1
         scroll_frame_duration: 0.075
-      highlight_fav_teams: True
-      display_for:
-        - wildcard
-        # - division
-        # - conference
-        # - league
+        scroll_pause_duration: 1.0
 
-  nba:
-    games: # nba_games scene.
+    # --- Race Preview (starting lights) scene ---
+    race_preview:
       transition: 'modern'
-      splash:
-        display_splash: True
-        splash_display_duration: 2
-      game_display_duration: 3.5
-      score_alerting:
-        score_coloured: false
-        score_fade_animation: false
-      rollover:
-        rollover_start_time_local: '07:00'
-        show_completed_games_until_rollover_end_time: True
-        rollover_end_time_local: '12:00'
+      display_duration: 5          # race card display before lights sequence
+      show_starting_lights: True
 
-    fav_team_next_game: # nba_fav_team_next_game scene.
-      transition: 'modern'
-      display_duration: 3.5
-      display_if_in_progress: False
-
-    standings: # nba_standings scene.
-      transition: 'modern'
-      splash:
-        display_splash: True
-        splash_display_duration: 2
-      scroll:
-        scroll_pause_duration: 1
-        scroll_frame_duration: 0.075
-      highlight_fav_teams: True
-      display_for:
-        - conference
-        # - division
-
-  pwhl:
-    games: # pwhl_games scene.
-      transition: 'modern'
-      splash:
-        display_splash: True
-        splash_display_duration: 2
-      game_display_duration: 3.5
-      score_alerting:
-        score_coloured: true
-        score_fade_animation: true
-      rollover:
-        rollover_start_time_local: '07:00'
-        show_completed_games_until_rollover_end_time: True
-        rollover_end_time_local: '12:00'
-
-    fav_team_next_game: # pwhl_fav_team_next_game scene.
-      transition: 'modern'
-      display_duration: 3.5
-      display_if_in_progress: False
-
-    standings: # pwhl_standings scene.
-      transition: 'modern'
-      splash:
-        display_splash: True
-        splash_display_duration: 2
-      scroll:
-        scroll_pause_duration: 1
-        scroll_frame_duration: 0.075
-      highlight_fav_teams: True
-      display_for:
-        - league
-        
-
-# Brightness settings.
+# Brightness settings
 brightness:
-  brightness_mode: 'auto' #'auto', 'static'.
-  max_brightness: 100
+  brightness_mode: 'static'
+  max_brightness: 60
 
-
-# Hardware configuration details.
+# Hardware configuration
 hardware_config:
-  hardware_mapping: 'adafruit-hat-pwm' # Adjust to match your hardware.
-  gpio_slowdown: 4 # 0-4. Adjust as needed for your hardware.
+  hardware_mapping: 'adafruit-hat-pwm'
+  gpio_slowdown: 4   # High slowdown for Pi Zero stability
