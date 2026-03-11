@@ -3,12 +3,15 @@ scene_order:
   - nhl_fav_team_next_game
   - nba_fav_team_next_game
   - pwhl_fav_team_next_game
+  - mls_fav_team_next_game
   - nhl_games
   - nba_games
   - pwhl_games
+  - mls_games
   - nhl_fav_team_next_game
   - nba_fav_team_next_game
   - pwhl_fav_team_next_game
+  - mls_fav_team_next_game
   - nhl_standings
   - nba_standings
   - pwhl_standings
@@ -22,6 +25,8 @@ favourite_teams:
     # - TOR # Example.
   pwhl:
     # - TOR # Example.
+  mls:
+    # - NE # Example
 
 
 # Note alt logos that should be used. Any number of teams can have an alt logo, but each team is limited to a single alt logo at a time.
@@ -32,6 +37,7 @@ alt_logos:
     # UTA: 2004 # Example.
   pwhl:
     # TOR: 2024 # Example. There's no alt logos for PWHL yet. Including this here for future use.
+  mls:
 
 
 # Settings for each scene.
@@ -125,6 +131,38 @@ scene_settings:
       display_if_in_progress: False
 
     standings: # pwhl_standings scene.
+      transition: 'modern'
+      splash:
+        display_splash: True
+        splash_display_duration: 2
+      scroll:
+        scroll_pause_duration: 1
+        scroll_frame_duration: 0.075
+      highlight_fav_teams: True
+      display_for:
+        - league
+  
+  mls:
+    games: # mls_games scene.
+      transition: 'modern'
+      splash:
+        display_splash: True
+        splash_display_duration: 2
+      game_display_duration: 3.5
+      score_alerting:
+        score_coloured: true
+        score_fade_animation: true
+      rollover:
+        rollover_start_time_local: '07:00'
+        show_completed_games_until_rollover_end_time: True
+        rollover_end_time_local: '12:00'
+
+    fav_team_next_game: # mls_fav_team_next_game scene.
+      transition: 'modern'
+      display_duration: 3.5
+      display_if_in_progress: False
+
+    standings: # mls_standings scene.
       transition: 'modern'
       splash:
         display_splash: True
