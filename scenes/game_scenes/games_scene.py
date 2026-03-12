@@ -150,7 +150,8 @@ class GamesScene(Scene):
         self.draw['centre'].text((16, 1), 'l', font=self.FONTS['sm'], fill=self.COLOURS['white'])
 
         # If game ended in OT, etc. add that to the centre image.
-        self.add_final_playing_period_to_image(game) # This exists in child classes.
+        if game['league'] not in ['MLS']:
+            self.add_final_playing_period_to_image(game) # This exists in child classes.
 
         # Add the current score to the centre image, noting if either team scored since previous data pull.
         self.add_score_to_image(game, overriding_team=game['scoring_team'], colour_override=self.COLOURS['red'])
@@ -172,7 +173,27 @@ class GamesScene(Scene):
             row_offset = 13 # Vertical offset if adding time remaining for an ongoing game vs start time of day for a game not started.
 
         # Add time to the centre image.
-        if time_str[0] == "2": # If the first digit of the time is 2. Will only occur when there's 20 mins left in a hockey period, never for a start time.
+        
+        if game['league'] in ['MLS']:
+            if not game['has_started']:
+                self.draw['centre'].text((0, 8 + row_offset), time_str[0], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((4, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                # Colon (manual dots since the font's colon looks funny).
+                self.draw['centre'].point((9, 11 + row_offset), fill=self.COLOURS['white'])
+                self.draw['centre'].point((9, 13 + row_offset), fill=self.COLOURS['white'])
+                # Seconds.
+                self.draw['centre'].text((11, 8 + row_offset), time_str[3], font=self.FONTS['sm'], fill=self.COLOURS['white']) # Skipping time_str[2] as that would be the colon.
+                self.draw['centre'].text((15, 8 + row_offset), time_str[4], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            elif '+' in time_str:
+                self.draw['centre'].text((4, 7 + row_offset), time_str.split('+')[0], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((4, 13 + row_offset), ('+' + time_str.split('+')[1]), font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            else:
+                self.draw['centre'].text((4, 9 + row_offset), time_str, font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            #self.draw['centre'].text((8, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            # Colon (manual dots since the font's colon looks funny).
+            #self.draw['centre'].text((11, 8 + row_offset), "'", font=self.FONTS['sm'], fill=self.COLOURS['white'])
+
+        elif time_str[0] == "2": # If the first digit of the time is 2. Will only occur when there's 20 mins left in a hockey period, never for a start time.
             # Minutes.
             self.draw['centre'].text((0, 8 + row_offset), time_str[0], font=self.FONTS['sm'], fill=self.COLOURS['white'])
             self.draw['centre'].text((4, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])

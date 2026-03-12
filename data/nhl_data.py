@@ -28,6 +28,7 @@ def get_games(date):
             # Note that 19 and 20 may need to be included. These were used for the 4 Nations Face-Off round robin & finals and will be evaluated again in the future.
             if game['gameType'] in [2, 3]:
                 games.append({
+                    'league': 'NHL',
                     'game_id': game['id'],
                     'home_abrv': game['homeTeam']['abbrev'],
                     'away_abrv': game['awayTeam']['abbrev'],

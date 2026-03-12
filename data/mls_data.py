@@ -17,18 +17,17 @@ def get_games(date):
     games = []
 
     # Call the NHL game API for the date specified and store the JSON results.
+    #MLS
     url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard?dates='
     games_response = session.get(url=f"{url}{date.strftime(format='%Y%m%d')}")
-    #games_response = session.get(url=f"{url}{date.strftime(format='%Y%m%d')}")
     games_json = games_response.json()['events']
 
     # For each game, build a dict recording current game details.
     if games_json: # If games today.
         for game in games_json:
-            # Append the dict to the games list. We only want to get regular season (gameType = 2) and playoff (3) games.
-            # Note that 19 and 20 may need to be included. These were used for the 4 Nations Face-Off round robin & finals and will be evaluated again in the future.
             if game['season']['type'] == 13846 :
                 games.append({
+                    'league': 'MLS',
                     'game_id': game['id'],
                     'home_abrv': game['competitions'][0]['competitors'][0]['team']['abbreviation'],
                     'away_abrv': game['competitions'][0]['competitors'][1]['team']['abbreviation'],
@@ -37,7 +36,11 @@ def get_games(date):
                     'start_datetime_utc': dt.strptime(game['date'], '%Y-%m-%dT%H:%MZ').replace(tzinfo=tz.utc),
                     'start_datetime_local': dt.strptime(game['date'], '%Y-%m-%dT%H:%MZ').replace(tzinfo=tz.utc).astimezone(tz=None), # Convert UTC to local time.
                     'status': game['competitions'][0]['status']['type']['state'],
-                    'has_started': True if game['competitions'][0]['status']['type']['state'] in ['LIVE', 'CRIT', 'OFF', 'FINAL'] else False,
+                    'has_started': True if game['competitions'][0]['status']['type']['state'] in ['in'] else False,
+                    'period_num': game['competitions'][0]['status']['period'] if 'period' in game['competitions'][0]['status'] else "NULL", # Doesn't until game starts.
+                    'period_time_remaining': game['competitions'][0]['status']['displayClock'], # clock doesn't exist until game starts.
+                    'is_intermission': True if game['competitions'][0]['status']['type']['name'] == "STATUS_HALFTIME" else False,
+                    # Will set the remaining later, default to False and None for now.
                     'home_team_scored': False,
                     'away_team_scored': False,
                     'scoring_team': None
@@ -51,7 +54,7 @@ def get_next_game(team):
     If the team is currently playing, will return details of the current game.
 
     Args:
-        team (str): Three char abbreviation of the team to pull next game details for.
+        5team (str): Three char abbreviation of the team to pull next game details for.
 
     Returns:
             dict: Dict of next game details.
@@ -85,7 +88,7 @@ def get_next_game(team):
                 'start_datetime_utc': dt.strptime(game['date'], '%Y-%m-%dT%H:%MZ').replace(tzinfo=tz.utc),
                 'start_datetime_local': dt.strptime(game['date'], '%Y-%m-%dT%H:%MZ').replace(tzinfo=tz.utc).astimezone(tz=None),
                 'is_today': True if dt.strptime(game['date'], '%Y-%m-%dT%H:%MZ').replace(tzinfo=tz.utc).astimezone(tz=None).date() == cur_date or dt.strptime(game['date'], '%Y-%m-%dT%H:%MZ').replace(tzinfo=tz.utc).astimezone(tz=None) < cur_datetime else False, # TODO: clean this up. Needed in case game is still going when date rolls over.
-                'has_started': True if game['competitions'][0]['status']['type']['state'] in ('LIVE', 'CRIT') else False
+                #'has_started': True if game['gameState'] in ('LIVE', 'CRIT') else False
             }
             return(next_game)
     

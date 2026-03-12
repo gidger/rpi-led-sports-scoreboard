@@ -33,6 +33,7 @@ def get_games(date):
             
             # Append the dict to the games list.
             games.append({
+                'league':'PWHL',
                 'game_id': game['ID'],
                 'home_abrv': game['HomeCode'],
                 'away_abrv': game['VisitorCode'],

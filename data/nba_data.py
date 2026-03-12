@@ -52,6 +52,7 @@ def get_games(date):
         for game in games_json:
             if 'All-Star' not in game['gameLabel'] and 'Preseason' not in game['gameLabel'] and 'Rising Stars' not in game['gameLabel']: # This should leave regular season and playoff games.
                 games.append({
+                    'league': 'NBA',
                     'game_id': game['gameId'],
                     'home_abrv': game['homeTeam']['teamTricode'],
                     'away_abrv': game['awayTeam']['teamTricode'],
