@@ -21,3 +21,18 @@ services:
         source: /etc/localtime
         target: /etc/localtime
         read_only: true
+      #Binding for use with existing image
+      - type: bind
+        source: ./data
+        target: /app/data
+        read_only: true
+      #Binding for use with existing image
+      - type: bind
+        source: ./main.py
+        target: /app/main.py
+        read_only: true
+      #Binding for use with existing image
+      - type: bind
+        source: ./scenes
+        target: /app/scenes
+        read_only: true

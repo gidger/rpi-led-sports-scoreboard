@@ -1,25 +1,24 @@
 from .fav_team_next_game_scene import FavTeamNextGameScene
 from setup.matrix_setup import matrix
-import data.mls_data
+import data.soccer_data
 from utils import data_utils
 
 from datetime import datetime as dt
 from time import sleep
 
 
-class MLSFavTeamNextGameScene(FavTeamNextGameScene):
-    """ Favourite team next game scene for the NHL. Contains functionality to pull schedule data from NHL API, parse, and build+display images based on the result.
+class SoccerFavTeamNextGameScene(FavTeamNextGameScene):
+    """ Favourite team next game scene for the soccer league of choice. Contains functionality to pull schedule data from ESPN API, parse, and build+display images based on the result.
     This class extends the general Scene and FavTeamNextGameScene classes. An object of this class type is created when the scoreboard is started.
     """
 
-    def __init__(self):
-        """ Defines the league as NHL. Used to identify the correct files when adding logos to images.
+    def __init__(self, SoccerLeague):
+        """ Defines the league as input league. Used to identify the correct files when adding logos to images.
         First runs init from the generic GameScene class.
         """
         
         super().__init__()
-        self.LEAGUE = 'MLS'
-
+        self.LEAGUE = SoccerLeague
 
     def display_scene(self):
         """ Displays the scene on the matrix.
@@ -33,7 +32,7 @@ class MLSFavTeamNextGameScene(FavTeamNextGameScene):
         # Determine next game for each fav team per config.yaml. Build images and display.
         if self.favourite_teams:
             for team in self.favourite_teams:
-                next_game_details = data.mls_data.get_next_game(team)
+                next_game_details = data.soccer_data.get_next_game(team, self)
                 
                 if next_game_details:
                     # If a game is in progress, and display_if_in_progress is False, exit without displaying anything.

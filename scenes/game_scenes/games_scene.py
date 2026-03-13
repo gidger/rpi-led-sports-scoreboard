@@ -174,7 +174,7 @@ class GamesScene(Scene):
 
         # Add time to the centre image.
         
-        if game['league'] in ['MLS']:
+        if self.LEAGUE in ['MLS', 'EPL', 'CONCACAF']:
             if not game['has_started']:
                 self.draw['centre'].text((0, 8 + row_offset), time_str[0], font=self.FONTS['sm'], fill=self.COLOURS['white'])
                 self.draw['centre'].text((4, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])

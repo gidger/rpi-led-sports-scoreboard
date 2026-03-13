@@ -10,8 +10,9 @@ from scenes.game_scenes.games_scene_pwhl import PWHLGamesScene
 from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_pwhl import PWHLFavTeamNextGameScene
 from scenes.standings_scenes.standings_scene_pwhl import PWHLStandingsScene
 
-from scenes.game_scenes.games_scene_mls import MLSGamesScene
-from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_mls import MLSFavTeamNextGameScene
+from scenes.game_scenes.games_scene_soccer import SoccerGamesScene
+from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_soccer import SoccerFavTeamNextGameScene
+from scenes.standings_scenes.standings_scene_soccer import SoccerStandingsScene
 
 from setup.matrix_setup import matrix, determine_matrix_brightness
 from utils import data_utils
@@ -32,8 +33,16 @@ def run_scoreboard():
         'pwhl_fav_team_next_game': PWHLFavTeamNextGameScene(),
         'pwhl_standings': PWHLStandingsScene(),
 
-        'mls_games': MLSGamesScene(),
-        'mls_fav_team_next_game': MLSFavTeamNextGameScene()
+        'mls_games': SoccerGamesScene('MLS'),
+        'mls_fav_team_next_game': SoccerFavTeamNextGameScene('MLS'),
+        'mls_standings': SoccerStandingsScene('MLS'),
+
+        'epl_games': SoccerGamesScene('EPL'),
+        'epl_fav_team_next_game': SoccerFavTeamNextGameScene('EPL'),
+        'epl_standings': SoccerStandingsScene('EPL'),
+
+        'concacaf_games': SoccerGamesScene('CONCACAF'),
+        'concacaf_fav_team_next_game': SoccerFavTeamNextGameScene('CONCACAF')
     }
 
     # Infinite loop.
