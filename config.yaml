@@ -412,11 +412,10 @@ scene_settings:
 # Brightness settings.
 brightness:
   brightness_mode: 'auto' #'auto', 'static'.
-  max_brightness: 33
+  max_brightness: 100
 
 
 # Hardware configuration details.
 hardware_config:
-  #hardware_mapping: 'adafruit-hat-pwm' # Adjust to match your hardware.
-  hardware_mapping: 'adafruit-hat'
+  hardware_mapping: 'adafruit-hat-pwm' # Adjust to match your hardware.
   gpio_slowdown: 4 # 0-4. Adjust as needed for your hardware.
