@@ -8,6 +8,12 @@ Hardware requirements, installation instructions (with and without Docker), and 
 - NHL 🏒
 - NBA 🏀
 - PWHL 🏒
+- MLS ⚽
+- English Premier League ⚽
+- La Liga ⚽
+- Bundesliga ⚽
+- Serie A ⚽
+- Ligue 1 ⚽
 
 ### [Watch Demo on YouTube](https://www.youtube.com/watch?v=BjqVBXsv_c8)
 [![Scoreboard Demo](https://img.youtube.com/vi/BjqVBXsv_c8/maxresdefault.jpg)](https://www.youtube.com/watch?v=BjqVBXsv_c8)
