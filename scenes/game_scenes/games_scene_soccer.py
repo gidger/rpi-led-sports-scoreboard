@@ -50,7 +50,7 @@ class SoccerGamesScene(GamesScene):
         }
 
         # If there are games to display from yesterday (and setting is enabled), build and display splash image (if enabled), then images for those games.
-        if display_yesterday and self.settings['rollover']['show_completed_games_until_rollover_end_time']:
+        if display_yesterday and self.settings['rollover']['show_completed_games_until_rollover_end_time'] and len(self.data_previous_day['games']) > 0:
             if self.settings['splash']['display_splash']:
                 self.display_splash_image(len(self.data_previous_day['games']), date=dates_to_display[0])
             self.display_game_images(self.data_previous_day['games'], date=dates_to_display[0])
@@ -152,7 +152,7 @@ class SoccerGamesScene(GamesScene):
 
         # If intermission, add "INT" to the image.
         if game['is_intermission']:
-            self.draw['centre'].text((3, 7), 'HT', font=self.FONTS['med'], fill=self.COLOURS['white'])
+            self.draw['centre'].text((4, 8), 'HT', font=self.FONTS['med'], fill=self.COLOURS['white'])
 
         # If the first period, add "1st" to the image.
         if game['period_num'] == 1:

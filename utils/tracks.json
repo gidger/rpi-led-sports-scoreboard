@@ -1,0 +1,198 @@
+
+{
+  "albert_park": {
+    "name": "Melbourne",
+    "circuit": "Albert Park Grand Prix Circuit",
+    "country": "Australia",
+    "round": 1,
+    "lat": -37.8497,
+    "lon": 144.968
+  },
+  "shanghai": {
+    "name": "Shanghai",
+    "circuit": "Shanghai International Circuit",
+    "country": "China",
+    "round": 2,
+    "lat": 31.3389,
+    "lon": 121.22
+  },
+  "suzuka": {
+    "name": "Suzuka",
+    "circuit": "Suzuka International Racing Course",
+    "country": "Japan",
+    "round": 3,
+    "lat": 34.8431,
+    "lon": 136.541
+  },
+  "bahrain": {
+    "name": "Sakhir",
+    "circuit": "Bahrain International Circuit",
+    "country": "Bahrain",
+    "round": 4,
+    "lat": 26.0325,
+    "lon": 50.5106
+  },
+  "jeddah": {
+    "name": "Jeddah",
+    "circuit": "Jeddah Corniche Circuit",
+    "country": "Saudi Arabia",
+    "round": 5,
+    "lat": 21.632,
+    "lon": 39.104
+  },
+  "miami": {
+    "name": "Miami",
+    "circuit": "Miami International Autodrome",
+    "country": "USA",
+    "round": 6,
+    "lat": 25.9581,
+    "lon": -80.2389
+  },
+  "villeneuve": {
+    "name": "Montreal",
+    "circuit": "Circuit Gilles Villeneuve",
+    "country": "Canada",
+    "round": 7,
+    "lat": 45.5,
+    "lon": -73.5228
+  },
+  "monaco": {
+    "name": "Monaco",
+    "circuit": "Circuit de Monaco",
+    "country": "Monaco",
+    "round": 8,
+    "lat": 43.7347,
+    "lon": 7.42056
+  },
+  "catalunya": {
+    "name": "Barcelona",
+    "circuit": "Circuit de Catalunya",
+    "country": "Spain",
+    "round": 9,
+    "lat": 41.57,
+    "lon": 2.26111
+  },
+  "red_bull_ring": {
+    "name": "Spielberg",
+    "circuit": "Red Bull Ring",
+    "country": "Austria",
+    "round": 10,
+    "lat": 47.2197,
+    "lon": 14.7647
+  },
+  "silverstone": {
+    "name": "Silverstone",
+    "circuit": "Silverstone Circuit",
+    "country": "UK",
+    "round": 11,
+    "lat": 52.0786,
+    "lon": -1.01694
+  },
+  "spa": {
+    "name": "Spa",
+    "circuit": "Circuit de Spa-Francorchamps",
+    "country": "Belgium",
+    "round": 12,
+    "lat": 50.4372,
+    "lon": 5.97139
+  },
+  "hungaroring": {
+    "name": "Budapest",
+    "circuit": "Hungaroring",
+    "country": "Hungary",
+    "round": 13,
+    "lat": 47.5789,
+    "lon": 19.2486
+  },
+  "zandvoort": {
+    "name": "Zandvoort",
+    "circuit": "Circuit Zandvoort",
+    "country": "Netherlands",
+    "round": 14,
+    "lat": 52.3888,
+    "lon": 4.54092
+  },
+  "monza": {
+    "name": "Monza",
+    "circuit": "Autodromo Nazionale Monza",
+    "country": "Italy",
+    "round": 15,
+    "lat": 45.6156,
+    "lon": 9.28111
+  },
+  "madrid": {
+    "name": "Madrid",
+    "circuit": "Circuito de Madrid",
+    "country": "Spain",
+    "round": 16,
+    "lat": 40.471,
+    "lon": -3.62
+  },
+  "baku": {
+    "name": "Baku",
+    "circuit": "Baku City Circuit",
+    "country": "Azerbaijan",
+    "round": 17,
+    "lat": 40.3725,
+    "lon": 49.8533
+  },
+  "marina_bay": {
+    "name": "Singapore",
+    "circuit": "Marina Bay Street Circuit",
+    "country": "Singapore",
+    "round": 18,
+    "lat": 1.2914,
+    "lon": 103.864
+  },
+  "americas": {
+    "name": "Austin",
+    "circuit": "Circuit of the Americas",
+    "country": "USA",
+    "round": 19,
+    "lat": 30.1328,
+    "lon": -97.6411
+  },
+  "rodriguez": {
+    "name": "Mexico City",
+    "circuit": "Autodromo Hermanos Rodriguez",
+    "country": "Mexico",
+    "round": 20,
+    "lat": 19.4042,
+    "lon": -99.0907
+  },
+  "interlagos": {
+    "name": "Sao Paulo",
+    "circuit": "Autodromo Jose Carlos Pace",
+    "country": "Brazil",
+    "round": 21,
+    "lat": -23.7036,
+    "lon": -46.6997
+  },
+  "las_vegas": {
+    "name": "Las Vegas",
+    "circuit": "Las Vegas Strip Circuit",
+    "country": "USA",
+    "round": 22,
+    "lat": 36.1147,
+    "lon": -115.173
+  },
+  "losail": {
+    "name": "Lusail",
+    "circuit": "Losail International Circuit",
+    "country": "Qatar",
+    "round": 23,
+    "lat": 25.49,
+    "lon": 51.454
+  },
+  "yas_marina": {
+    "name": "Abu Dhabi",
+    "circuit": "Yas Marina Circuit",
+    "country": "UAE",
+    "round": 24,
+    "lat": 24.4672,
+    "lon": 54.6031
+  }
+}
+
+
+

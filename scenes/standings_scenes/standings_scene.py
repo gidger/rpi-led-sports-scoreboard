@@ -140,7 +140,10 @@ class StandingsScene(Scene):
                 tmp_draw.text((14, -2), '*', font=self.FONTS['med'], fill=self.COLOURS['red'])
             
             # Add team abrv.
-            tmp_draw.text((21, -1), team['team_abrv'], font=self.FONTS['sm'], fill=team_colour)
+            if self.LEAGUE != 'F1' or self.F1_STANDINGS == 'driver':
+                tmp_draw.text((21, -1), team['team_abrv'], font=self.FONTS['sm'], fill=team_colour)
+            else:
+                tmp_draw.text((16, -1), team['team_abrv'], font=self.FONTS['sm'], fill=team_colour)
 
             if self.data['standings']['rank_method'] == 'Points':
                 # Determine placement of team points and add to image.

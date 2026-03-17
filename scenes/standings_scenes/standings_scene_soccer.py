@@ -1,6 +1,6 @@
 from .standings_scene import StandingsScene
 from setup.matrix_setup import matrix
-import data.nba_data
+import data.soccer_data
 from utils import data_utils
 
 from datetime import datetime as dt

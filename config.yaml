@@ -1,48 +1,52 @@
 # The following scenes will be displayed in the order specified. Will loop once complete.
 scene_order:
   - nhl_fav_team_next_game
-  - nba_fav_team_next_game
-  - pwhl_fav_team_next_game
-  - mls_fav_team_next_game
-  - epl_fav_team_next_game
-  - laliga_fav_team_next_game
-  - bundesliga_fav_team_next_game
-  - seriea_fav_team_next_game
-  - ligue1_fav_team_next_game
-  - concacaf_fav_team_next_game
   - nhl_games
-  - nba_games
-  - pwhl_games
-  - mls_games
-  - epl_games
-  - laliga_games
-  - bundesliga_games
-  - seriea_games
-  - ligue1_games
-  - concacaf_games
   - nhl_standings
+  - nba_fav_team_next_game
+  - nba_games
   - nba_standings
+  - pwhl_fav_team_next_game
+  - pwhl_games
   - pwhl_standings
+  - mls_fav_team_next_game
+  - mls_games
   - mls_standings
+  - epl_fav_team_next_game
+  - epl_games
   - epl_standings
+  - laliga_fav_team_next_game
+  - laliga_games
   - laliga_standings
+  - bundesliga_fav_team_next_game
+  - bundesliga_games
   - bundesliga_standings
+  - seriea_fav_team_next_game
+  - seriea_games
   - seriea_standings
+  - ligue1_fav_team_next_game
+  - ligue1_games
   - ligue1_standings
-
-
-# Note your favourite teams by league. Any number of teams can be specified.
+  - f1_next_race
+  - f1_driver_standings
+  - f1_constructor_standings
+  - f1_race_weekend
+  - f1_race_preview
 favourite_teams:
   nhl:
     # - BOS # Example.
+    - BOS
   nba:
     # - TOR # Example.
   pwhl:
     # - TOR # Example.
+    - BOS
   mls:
     # - NE # Example
+    - NE
   epl:
     # - EVE # Example
+    - EVE
   ll:
 
   bl:
@@ -51,8 +55,11 @@ favourite_teams:
 
   l1:
 
-  concacaf:
+  f1:
 
+favourite_drivers:
+  - HAM   # Lewis Hamilton (Ferrari)
+  - NOR   # Lando Norris (McLaren)
 
 # Note alt logos that should be used. Any number of teams can have an alt logo, but each team is limited to a single alt logo at a time.
 alt_logos:
@@ -74,7 +81,7 @@ alt_logos:
 
   l1:
 
-  concacaf:
+  f1:
 
 # Settings for each scene.
 scene_settings:
@@ -86,12 +93,13 @@ scene_settings:
         splash_display_duration: 2
       game_display_duration: 3.5
       score_alerting:
-        score_coloured: true
-        score_fade_animation: true
+        score_coloured: True
+        score_fade_animation: True
       rollover:
         rollover_start_time_local: '07:00'
         show_completed_games_until_rollover_end_time: True
         rollover_end_time_local: '12:00'
+      soccer_league: False
 
     fav_team_next_game: # nhl_fav_team_next_game scene.
       transition: 'modern'
@@ -121,12 +129,13 @@ scene_settings:
         splash_display_duration: 2
       game_display_duration: 3.5
       score_alerting:
-        score_coloured: false
-        score_fade_animation: false
+        score_coloured: False
+        score_fade_animation: False
       rollover:
         rollover_start_time_local: '07:00'
         show_completed_games_until_rollover_end_time: True
         rollover_end_time_local: '12:00'
+      soccer_league: False
 
     fav_team_next_game: # nba_fav_team_next_game scene.
       transition: 'modern'
@@ -154,12 +163,13 @@ scene_settings:
         splash_display_duration: 2
       game_display_duration: 3.5
       score_alerting:
-        score_coloured: true
-        score_fade_animation: true
+        score_coloured: True
+        score_fade_animation: True
       rollover:
         rollover_start_time_local: '07:00'
         show_completed_games_until_rollover_end_time: True
         rollover_end_time_local: '12:00'
+      soccer_league: False
 
     fav_team_next_game: # pwhl_fav_team_next_game scene.
       transition: 'modern'
@@ -177,7 +187,7 @@ scene_settings:
       highlight_fav_teams: True
       display_for:
         - league
-  
+
   mls:
     games: # mls_games scene.
       transition: 'modern'
@@ -186,12 +196,13 @@ scene_settings:
         splash_display_duration: 2
       game_display_duration: 3.5
       score_alerting:
-        score_coloured: true
-        score_fade_animation: true
+        score_coloured: True
+        score_fade_animation: True
       rollover:
         rollover_start_time_local: '07:00'
         show_completed_games_until_rollover_end_time: True
         rollover_end_time_local: '12:00'
+      soccer_league: True
 
     fav_team_next_game: # mls_fav_team_next_game scene.
       transition: 'modern'
@@ -220,12 +231,13 @@ scene_settings:
         splash_display_duration: 2
       game_display_duration: 3.5
       score_alerting:
-        score_coloured: true
-        score_fade_animation: true
+        score_coloured: True
+        score_fade_animation: True
       rollover:
         rollover_start_time_local: '07:00'
         show_completed_games_until_rollover_end_time: True
         rollover_end_time_local: '12:00'
+      soccer_league: True
 
     fav_team_next_game: # epl_fav_team_next_game scene.
       transition: 'modern'
@@ -243,7 +255,7 @@ scene_settings:
       highlight_fav_teams: True
       display_for:
         - league
-  
+
   # La Liga
   ll:
     games: # ll_games scene.
@@ -253,12 +265,13 @@ scene_settings:
         splash_display_duration: 2
       game_display_duration: 3.5
       score_alerting:
-        score_coloured: true
-        score_fade_animation: true
+        score_coloured: True
+        score_fade_animation: True
       rollover:
         rollover_start_time_local: '07:00'
         show_completed_games_until_rollover_end_time: True
         rollover_end_time_local: '12:00'
+      soccer_league: True
 
     fav_team_next_game: # ll_fav_team_next_game scene.
       transition: 'modern'
@@ -276,7 +289,7 @@ scene_settings:
       highlight_fav_teams: True
       display_for:
         - league
-  
+
   # Bundesliga
   bl:
     games: # bl_games scene.
@@ -286,12 +299,13 @@ scene_settings:
         splash_display_duration: 2
       game_display_duration: 3.5
       score_alerting:
-        score_coloured: true
-        score_fade_animation: true
+        score_coloured: True
+        score_fade_animation: True
       rollover:
         rollover_start_time_local: '07:00'
         show_completed_games_until_rollover_end_time: True
         rollover_end_time_local: '12:00'
+      soccer_league: True
 
     fav_team_next_game: # bl_fav_team_next_game scene.
       transition: 'modern'
@@ -319,12 +333,13 @@ scene_settings:
         splash_display_duration: 2
       game_display_duration: 3.5
       score_alerting:
-        score_coloured: true
-        score_fade_animation: true
+        score_coloured: True
+        score_fade_animation: True
       rollover:
         rollover_start_time_local: '07:00'
         show_completed_games_until_rollover_end_time: True
         rollover_end_time_local: '12:00'
+      soccer_league: True
 
     fav_team_next_game: # sa_fav_team_next_game scene.
       transition: 'modern'
@@ -342,7 +357,7 @@ scene_settings:
       highlight_fav_teams: True
       display_for:
         - league
-  
+
   #Ligue 1
   l1:
     games: # l1_games scene.
@@ -352,12 +367,13 @@ scene_settings:
         splash_display_duration: 2
       game_display_duration: 3.5
       score_alerting:
-        score_coloured: true
-        score_fade_animation: true
+        score_coloured: True
+        score_fade_animation: True
       rollover:
         rollover_start_time_local: '07:00'
         show_completed_games_until_rollover_end_time: True
         rollover_end_time_local: '12:00'
+      soccer_league: True
 
     fav_team_next_game: # l1_fav_team_next_game scene.
       transition: 'modern'
@@ -376,27 +392,51 @@ scene_settings:
       display_for:
         - league
 
-  concacaf:
-    games: # concacaf_games scene.
+  f1:
+    # --- Next Race scene ---
+    next_race:
       transition: 'modern'
       splash:
         display_splash: True
         splash_display_duration: 2
-      game_display_duration: 3.5
-      score_alerting:
-        score_coloured: true
-        score_fade_animation: true
-      rollover:
-        rollover_start_time_local: '07:00'
-        show_completed_games_until_rollover_end_time: True
-        rollover_end_time_local: '12:00'
+      display_duration: 6          # seconds per page (circuit / schedule)
 
-    fav_team_next_game: # mls_fav_team_next_game scene.
+    # --- Race Weekend scene (quali grid + race results) ---
+    race_weekend:
       transition: 'modern'
-      display_duration: 3.5
-      display_if_in_progress: False
+      splash:
+        display_splash: True
+        splash_display_duration: 2
+      driver_display_duration: 3   # seconds each driver row is highlighted
 
-    standings: # mls_standings scene.
+    # --- Driver Standings scene ---
+    driver_standings:
+      transition: 'modern'
+      splash:
+        display_splash: True
+        splash_display_duration: 2
+      highlight_fav_drivers: True
+      scroll:
+        scroll_frame_duration: 0.075
+        scroll_pause_duration: 1.0
+
+    # --- Constructor Standings scene ---
+    constructor_standings:
+      transition: 'modern'
+      splash:
+        display_splash: True
+        splash_display_duration: 2
+      scroll:
+        scroll_frame_duration: 0.075
+        scroll_pause_duration: 1.0
+
+    # --- Race Preview (starting lights) scene ---
+    race_preview:
+      transition: 'modern'
+      display_duration: 5          # race card display before lights sequence
+      show_starting_lights: True
+
+    standings: # bl_standings scene.
       transition: 'modern'
       splash:
         display_splash: True
@@ -407,7 +447,7 @@ scene_settings:
       highlight_fav_teams: True
       display_for:
         - league
-        
+
 
 # Brightness settings.
 brightness:

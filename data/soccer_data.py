@@ -20,7 +20,6 @@ league_mapping = {
         'BL':['ger.1', [13547], 5, 4, 16],
         'SA':['ita.1', [13447], 5, 4, 17],
         'L1':['fra.1', [13546], 5, 4, 16],
-        'CONCACAF': ['concacaf.champions', list(range(13890, 13895)), 0, 0, 0]
     }
 
 def get_games(date, self):
@@ -45,7 +44,7 @@ def get_games(date, self):
     # For each game, build a dict recording current game details.
     if games_json: # If games today.
         for game in games_json:
-            if game['season']['type'] in league_mapping[self.LEAGUE][1] :
+            if (self.LEAGUE == 'MLS' and game['season']['slug'] != "all-star-game") or (self.LEAGUE != 'MLS' and self.settings['soccer_league']) :
                 games.append({
                     'game_id': game['id'],
                     'home_abrv': game['competitions'][0]['competitors'][0]['team']['abbreviation'],
@@ -100,7 +99,7 @@ def get_next_game(team, self):
                 'start_datetime_utc': dt.strptime(game['date'], '%Y-%m-%dT%H:%MZ').replace(tzinfo=tz.utc),
                 'start_datetime_local': dt.strptime(game['date'], '%Y-%m-%dT%H:%MZ').replace(tzinfo=tz.utc).astimezone(tz=None),
                 'is_today': True if dt.strptime(game['date'], '%Y-%m-%dT%H:%MZ').replace(tzinfo=tz.utc).astimezone(tz=None).date() == cur_date or dt.strptime(game['date'], '%Y-%m-%dT%H:%MZ').replace(tzinfo=tz.utc).astimezone(tz=None) < cur_datetime else False, # TODO: clean this up. Needed in case game is still going when date rolls over.
-                #'has_started': True if game['gameState'] in ('LIVE', 'CRIT') else False
+                'has_started': True if game['competitions'][0]['status']['type']['state'] in ['in', 'post'] else False
             }
             return(next_game)
     

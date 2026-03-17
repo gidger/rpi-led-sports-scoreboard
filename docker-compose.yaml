@@ -41,3 +41,29 @@ services:
         source: ./utils
         target: /app/utils
         read_only: true
+
+  config-ui:
+    image: python:3.12-slim-bookworm # Or Trixie
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ./config.yaml
+        target: /app/config.yaml
+        read_only: false
+      - type: bind
+        source: ./assets
+        target: /app/static
+        read_only: false
+      - type: bind
+        source: ./web_app.py
+        target: /app/web_app.py
+        read_only: true
+      - type: bind
+        source: ./templates
+        target: /app/templates
+        read_only: true  
+    ports:
+      - "80:5000"
+    working_dir: /app
+    command: >
+      sh -c "pip install flask ruamel.yaml && python web_app.py"

@@ -13,7 +13,7 @@ class GamesScene(Scene):
     """ Generic game scene, regardless of league/sport. Contains functionality to build score, no game today, etc. images and display them on the matrix.
     This class extends the general Scene class and is extended by those of specific leagues. An object of this class type is never created directly.
     """
-    Soccer_Leagues = ['MLS', 'EPL', 'LL', 'BL', 'SA', 'L1', 'CONCACAF']
+    #Soccer_Leagues = ['MLS', 'EPL', 'LL', 'BL', 'SA', 'L1', 'CONCACAF']
     
     
     def __init__(self):
@@ -154,7 +154,7 @@ class GamesScene(Scene):
         self.draw['centre'].text((16, 1), 'l', font=self.FONTS['sm'], fill=self.COLOURS['white'])
 
         # If game ended in OT, etc. add that to the centre image.
-        if self.LEAGUE not in self.Soccer_Leagues:
+        if not self.settings['soccer_league']:
             self.add_final_playing_period_to_image(game) # This exists in child classes.
 
         # Add the current score to the centre image, noting if either team scored since previous data pull.
@@ -178,19 +178,30 @@ class GamesScene(Scene):
 
         # Add time to the centre image.
         
-        if self.LEAGUE in self.Soccer_Leagues:
+        if self.settings['soccer_league']:
             if not game['has_started']:
-                self.draw['centre'].text((0, 8 + row_offset), time_str[0], font=self.FONTS['sm'], fill=self.COLOURS['white'])
-                self.draw['centre'].text((4, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])
-                # Colon (manual dots since the font's colon looks funny).
-                self.draw['centre'].point((9, 11 + row_offset), fill=self.COLOURS['white'])
-                self.draw['centre'].point((9, 13 + row_offset), fill=self.COLOURS['white'])
-                # Seconds.
-                self.draw['centre'].text((11, 8 + row_offset), time_str[3], font=self.FONTS['sm'], fill=self.COLOURS['white']) # Skipping time_str[2] as that would be the colon.
-                self.draw['centre'].text((15, 8 + row_offset), time_str[4], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                if time_str[0] == "0" : 
+                    # Hour/minutes.
+                    self.draw['centre'].text((2, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                    # Colon.
+                    self.draw['centre'].point((7, 11 + row_offset), fill=self.COLOURS['white'])
+                    self.draw['centre'].point((7, 13 + row_offset), fill=self.COLOURS['white'])
+                    # Minutes/seconds.
+                    self.draw['centre'].text((9, 8 + row_offset), time_str[3], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                    self.draw['centre'].text((14, 8 + row_offset), time_str[4], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                else: 
+                    self.draw['centre'].text((0, 8 + row_offset), time_str[0], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                    self.draw['centre'].text((4, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                    # Colon (manual dots since the font's colon looks funny).
+                    self.draw['centre'].point((9, 11 + row_offset), fill=self.COLOURS['white'])
+                    self.draw['centre'].point((9, 13 + row_offset), fill=self.COLOURS['white'])
+                    # Seconds.
+                    self.draw['centre'].text((11, 8 + row_offset), time_str[3], font=self.FONTS['sm'], fill=self.COLOURS['white']) # Skipping time_str[2] as that would be the colon.
+                    self.draw['centre'].text((15, 8 + row_offset), time_str[4], font=self.FONTS['sm'], fill=self.COLOURS['white'])
             elif '+' in time_str:
                 self.draw['centre'].text((4, 7 + row_offset), time_str.split('+')[0], font=self.FONTS['sm'], fill=self.COLOURS['white'])
                 self.draw['centre'].text((4, 13 + row_offset), ('+' + time_str.split('+')[1]), font=self.FONTS['sm'], fill=self.COLOURS['white'])
+
             else:
                 self.draw['centre'].text((4, 9 + row_offset), time_str, font=self.FONTS['sm'], fill=self.COLOURS['white'])
             #self.draw['centre'].text((8, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])
@@ -242,7 +253,7 @@ class GamesScene(Scene):
         
         away_logo_path = f'assets/images/{self.LEAGUE}/teams/{game['away_abrv']}.png' if game['away_abrv'] not in self.alt_logos else f'assets/images/{self.LEAGUE}/teams_alt/{game['away_abrv']}_{self.alt_logos[game['away_abrv']]}.png'
         
-        if not Path(away_logo_path).exists() and self.league in self.Soccer_Leagues:
+        if not Path(away_logo_path).exists() and self.settings['soccer_league']:
             print (f'{game['away_abrv']} logo missing')
             get_team_logo(game['away_abrv'], self)
             image_utils.process_in_place(away_logo_path)
@@ -262,7 +273,7 @@ class GamesScene(Scene):
         # Determine the path of the image to load. Standard path or alt logo.
         home_logo_path = f'assets/images/{self.LEAGUE}/teams/{game['home_abrv']}.png' if game['home_abrv'] not in self.alt_logos else f'assets/images/{self.LEAGUE}/teams_alt/{game['home_abrv']}_{self.alt_logos[game['home_abrv']]}.png'
 
-        if not Path(home_logo_path).exists() and self.league in self.Soccer_Leagues:
+        if not Path(home_logo_path).exists() and self.settings['soccer_league']:
             print (f'{game['home_abrv']} logo missing')
             get_team_logo(game['home_abrv'], self)
             image_utils.process_in_place(home_logo_path)
