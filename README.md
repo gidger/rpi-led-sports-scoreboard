@@ -4,6 +4,10 @@ Display live hockey and basketball game scores, future start times, standings, e
 
 Hardware requirements, installation instructions (with and without Docker), and configuration breakdown are below.
 
+## Credits
+Forked from [Gidger rpi led sports scoreboard](https://github.com/gidger/rpi-led-sports-scoreboard)
+F1 pulled from [MAX-POW3R fork of Gidger](https://github.com/MAX-P0W3R/rpi-led-nhl-scoreboard) with some adjustments to make standings show the same as other sports.
+
 **Leagues Implemented:**
 - NHL 🏒
 - NBA 🏀
@@ -14,6 +18,7 @@ Hardware requirements, installation instructions (with and without Docker), and 
 - Bundesliga ⚽
 - Serie A ⚽
 - Ligue 1 ⚽
+- F1 🏎️
 
 ### [Watch Demo on YouTube](https://www.youtube.com/watch?v=BjqVBXsv_c8)
 [![Scoreboard Demo](https://img.youtube.com/vi/BjqVBXsv_c8/maxresdefault.jpg)](https://www.youtube.com/watch?v=BjqVBXsv_c8)
@@ -243,12 +248,39 @@ Functionality is divided into different "scenes" that each display information o
 | PWHL Games                    | pwhl_games                           | Displays live PWHL game scores, time remaining, etc. If the game hasn't started, start time is displayed. Can optionally display games for previous day as well.                                                  |
 | PWHL Favourite Team Next Game | pwhl_fav_team_next_game              | Displays next game details for all specified favourite teams. If game is today, displays start time. Can optionally be suppressed if game is in progress. Will not display anything if no favourite team is set. |
 | PWHL Standings                | pwhl_standings                       | Displays standings for wild card, division, conference, and/or overall, as configured by the user. Can optionally highlight favourite team.                                                                      |
+| MLS Games                    | mls_games                           | Displays live PWHL game scores, time remaining, etc. If the game hasn't started, start time is displayed. Can optionally display games for previous day as well.                                                  |
+| MLS Favourite Team Next Game | mls_fav_team_next_game              | Displays next game details for all specified favourite teams. If game is today, displays start time. Can optionally be suppressed if game is in progress. Will not display anything if no favourite team is set. |
+| MLS Standings                | mls_standings                       | Displays standings for conference, and/or overall, as configured by the user. Can optionally highlight favourite team.                                                                      |
+| Premier League Games                    | epl_games                           | Displays live PWHL game scores, time remaining, etc. If the game hasn't started, start time is displayed. Can optionally display games for previous day as well.                                                  |
+| Premier League Favourite Team Next Game | epl_fav_team_next_game              | Displays next game details for all specified favourite teams. If game is today, displays start time. Can optionally be suppressed if game is in progress. Will not display anything if no favourite team is set. |
+| Premier League Standings                | epl_standings                       | Displays overall standings, as configured by the user. Can optionally highlight favourite team.                                                                      |
+| La Liga Games                    | ll_games                           | Displays live PWHL game scores, time remaining, etc. If the game hasn't started, start time is displayed. Can optionally display games for previous day as well.                                                  |
+| La Liga Favourite Team Next Game | ll_fav_team_next_game              | Displays next game details for all specified favourite teams. If game is today, displays start time. Can optionally be suppressed if game is in progress. Will not display anything if no favourite team is set. |
+| La Liga Standings                | ll_standings                       | Displays overall standings, as configured by the user. Can optionally highlight favourite team.                                                                      |
+| Bundesliga Games                    | bl_games                           | Displays live PWHL game scores, time remaining, etc. If the game hasn't started, start time is displayed. Can optionally display games for previous day as well.                                                  |
+| Bundesliga Favourite Team Next Game | bl_fav_team_next_game              | Displays next game details for all specified favourite teams. If game is today, displays start time. Can optionally be suppressed if game is in progress. Will not display anything if no favourite team is set. |
+| Bundesliga Standings                | bl_standings                       | Displays overall standings, as configured by the user. Can optionally highlight favourite team.                                                                      |
+| Serie A Games                    | sa_games                           | Displays live PWHL game scores, time remaining, etc. If the game hasn't started, start time is displayed. Can optionally display games for previous day as well.                                                  |
+| Serie A Favourite Team Next Game | sa_fav_team_next_game              | Displays next game details for all specified favourite teams. If game is today, displays start time. Can optionally be suppressed if game is in progress. Will not display anything if no favourite team is set. |
+| Serie A Standings                | sa_standings                       | Displays overall standings, as configured by the user. Can optionally highlight favourite team.                                                                      |
+| Ligue 1 Games                    | l1_games                           | Displays live PWHL game scores, time remaining, etc. If the game hasn't started, start time is displayed. Can optionally display games for previous day as well.                                                  |
+| Ligue 1 Favourite Team Next Game | l1_fav_team_next_game              | Displays next game details for all specified favourite teams. If game is today, displays start time. Can optionally be suppressed if game is in progress. Will not display anything if no favourite team is set. |
+| Ligue 1 Standings                | l1_standings                       | Displays overall standings, as configured by the user. Can optionally highlight favourite team.                                                                      |
+| Formula 1 Next Race              | f1_next_race                       | Displays next scheduled race                                                                      |
+| Formula 1 Driver Standings       | f1_driver_standings                | Displays current driver standings                                                                      |
+| Formula 1 Constructor Standings  | f1_constructor_standings           | Displays current constructor standings                                                                      |
+| Formula 1 Race Weekend           | f1_race_weekend                    | Displays race information                                                                    |
+| Formula 1 Race Preview           | f1_race_preview                    | Displays race preview                                                                    |
+
 
 <a name="config"/>
 
 ## Configuration
 
 The scoreboard can be customized to meet your specific needs and preferences. Each scene has their own settings that can be used to fine tune behaviour. Additionally, there's general settings that apply to all scenes. The following sections details what can be edited in config.yaml to fine tune your scoreboard experience. All non hardware configuration settings can be updated without restarting the scoreboard. Scene changes will take effect the next time that scene is displayed.
+
+### Web Access
+Scene selection can be done by accessing the host webpage on port 80 and selecting desired scenes, then clicking Save and apply. This will update the config.yaml to only include your desired scenes while avoiding commented out lines. Please note: the changes to the config.yaml scenes will not go into effect until it has iterated through the previously selected scenes once it starts.
 
 ### General
 
