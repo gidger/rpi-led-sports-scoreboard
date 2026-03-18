@@ -6,6 +6,10 @@ from scenes.game_scenes.games_scene_nba import NBAGamesScene
 from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_nba import NBAFavTeamNextGameScene
 from scenes.standings_scenes.standings_scene_nba import NBAStandingsScene
 
+from scenes.game_scenes.games_scene_mlb import MLBGamesScene
+from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_mlb import MLBFavTeamNextGameScene
+from scenes.standings_scenes.standings_scene_mlb import MLBStandingsScene
+
 from scenes.game_scenes.games_scene_pwhl import PWHLGamesScene
 from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_pwhl import PWHLFavTeamNextGameScene
 from scenes.standings_scenes.standings_scene_pwhl import PWHLStandingsScene
@@ -25,6 +29,10 @@ def run_scoreboard():
         'nba_fav_team_next_game': NBAFavTeamNextGameScene(),
         'nba_standings': NBAStandingsScene(),
         
+        'mlb_games': MLBGamesScene(),
+        'mlb_fav_team_next_game': MLBFavTeamNextGameScene(),
+        'mlb_standings': MLBStandingsScene(),
+
         'pwhl_games': PWHLGamesScene(),
         'pwhl_fav_team_next_game': PWHLFavTeamNextGameScene(),
         'pwhl_standings': PWHLStandingsScene()
