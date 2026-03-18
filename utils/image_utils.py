@@ -1,4 +1,6 @@
+import os
 from PIL import Image
+from pathlib import Path
 
 
 def crop_image(image):
@@ -35,3 +37,29 @@ def clear_image(image, image_draw):
             drw.rectangle([(0,0), im.size], fill=(0,0,0))
     else:
         image_draw.rectangle([(0,0), image.size], fill=(0,0,0))
+
+# Resets image to RGB space to ensure alpha channel shows black
+def process_in_place(file_path, target_size=(500, 500)):
+    # Define a temporary filename in the SAME folder
+    temp_path = Path(file_path).with_suffix(".tmp")
+    
+    try:
+        # Open and process
+        with Image.open(file_path) as img:
+            img = img.convert("RGBA")
+            img = img.resize(target_size, Image.Resampling.LANCZOS)
+            
+            background = Image.new("RGB", target_size, (0, 0, 0))
+            background.paste(img, mask=img.split()[3])
+            
+            # Save to the .tmp file
+            background.save(temp_path, "PNG")
+        
+        # replace original with the new version
+        os.replace(temp_path, file_path)
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        # Clean up the temp file if something went wrong
+        if temp_path.exists():
+            temp_path.unlink()

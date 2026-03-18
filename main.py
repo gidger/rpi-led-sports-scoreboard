@@ -10,6 +10,17 @@ from scenes.game_scenes.games_scene_pwhl import PWHLGamesScene
 from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_pwhl import PWHLFavTeamNextGameScene
 from scenes.standings_scenes.standings_scene_pwhl import PWHLStandingsScene
 
+from scenes.game_scenes.games_scene_soccer import SoccerGamesScene
+from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_soccer import SoccerFavTeamNextGameScene
+from scenes.standings_scenes.standings_scene_soccer import SoccerStandingsScene
+
+from scenes.f1_scenes.f1_race_preview import F1RacePreviewScene
+from scenes.f1_scenes.f1_race_weekend import F1RaceWeekendScene
+from scenes.f1_scenes.f1_next_race import F1NextRaceScene
+from scenes.f1_scenes.f1_driver_standings import F1DriverStandingsScene
+from scenes.f1_scenes.f1_constructor_standings import F1ConstructorStandingsScene
+
+from scenes.standings_scenes.standings_scene_f1 import F1StandingsScene
 from setup.matrix_setup import matrix, determine_matrix_brightness
 from utils import data_utils
 
@@ -27,7 +38,45 @@ def run_scoreboard():
         
         'pwhl_games': PWHLGamesScene(),
         'pwhl_fav_team_next_game': PWHLFavTeamNextGameScene(),
-        'pwhl_standings': PWHLStandingsScene()
+        'pwhl_standings': PWHLStandingsScene(),
+
+        'mls_games': SoccerGamesScene('MLS'),
+        'mls_fav_team_next_game': SoccerFavTeamNextGameScene('MLS'),
+        'mls_standings': SoccerStandingsScene('MLS'),
+
+        # Premier League
+        'epl_games': SoccerGamesScene('EPL'),
+        'epl_fav_team_next_game': SoccerFavTeamNextGameScene('EPL'),
+        'epl_standings': SoccerStandingsScene('EPL'),
+
+        # La Liga
+        'laliga_games': SoccerGamesScene('LL'),
+        'laliga_fav_team_next_game': SoccerFavTeamNextGameScene('LL'),
+        'laliga_standings': SoccerStandingsScene('LL'),
+
+        # Bundesliga
+        'bundesliga_games': SoccerGamesScene('BL'),
+        'bundesliga_fav_team_next_game': SoccerFavTeamNextGameScene('BL'),
+        'bundesliga_standings': SoccerStandingsScene('BL'),
+
+        # Serie A
+        'seriea_games': SoccerGamesScene('SA'),
+        'seriea_fav_team_next_game': SoccerFavTeamNextGameScene('SA'),
+        'seriea_standings': SoccerStandingsScene('SA'),
+
+        # Ligue 1
+        'ligue1_games': SoccerGamesScene('L1'),
+        'ligue1_fav_team_next_game': SoccerFavTeamNextGameScene('L1'),
+        'ligue1_standings': SoccerStandingsScene('L1'),
+
+        'concacaf_games': SoccerGamesScene('CONCACAF'),
+        'concacaf_fav_team_next_game': SoccerFavTeamNextGameScene('CONCACAF'),
+
+        'f1_race_preview':        F1RacePreviewScene(),
+        'f1_race_weekend':        F1RaceWeekendScene(),
+        'f1_next_race':           F1NextRaceScene(),
+        'f1_driver_standings':    F1StandingsScene('driver'),
+        'f1_constructor_standings': F1StandingsScene('constructor')
     }
 
     # Infinite loop.

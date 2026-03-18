@@ -64,7 +64,7 @@ class StandingsScene(Scene):
         self.draw['full'].text((day_col, 12), day, font=self.FONTS['sm'], fill=self.COLOURS['white'])
 
 
-    def build_standings_image(self, type, name, standings, playoff_cutoff_hard=0, playoff_cutoff_soft=0):
+    def build_standings_image(self, type, name, standings, playoff_cutoff_hard=0, playoff_cutoff_soft=0, relegation_cutoff=0):
         """ Build overall standings image. Includes standing type in sidebar, and the actual standings by team.
 
         Args:
@@ -89,10 +89,10 @@ class StandingsScene(Scene):
         self.images['side'].paste(tmp_img, (0,0))
 
         # Build the individual standing row images and overall standing image.
-        self.build_standing_row_images(standings, playoff_cutoff_hard, playoff_cutoff_soft)
+        self.build_standing_row_images(standings, playoff_cutoff_hard, playoff_cutoff_soft, relegation_cutoff)
 
 
-    def build_standing_row_images(self, standings, playoff_cutoff_hard=0, playoff_cutoff_soft=0):
+    def build_standing_row_images(self, standings, playoff_cutoff_hard=0, playoff_cutoff_soft=0, relegation_cutoff=0):
         """ Builds images for each standing row (each team + details), as well as one for all the standings.
 
         Args:
@@ -116,6 +116,8 @@ class StandingsScene(Scene):
                 line_colour = self.COLOURS['red']
             elif row == playoff_cutoff_soft-1:
                 line_colour = self.COLOURS['green']
+            elif row == relegation_cutoff-1:
+                line_colour = self.COLOURS['red']
             else:
                 line_colour = self.COLOURS['grey_dark']
             
@@ -138,7 +140,10 @@ class StandingsScene(Scene):
                 tmp_draw.text((14, -2), '*', font=self.FONTS['med'], fill=self.COLOURS['red'])
             
             # Add team abrv.
-            tmp_draw.text((21, -1), team['team_abrv'], font=self.FONTS['sm'], fill=team_colour)
+            if self.LEAGUE != 'F1' or self.F1_STANDINGS == 'driver':
+                tmp_draw.text((21, -1), team['team_abrv'], font=self.FONTS['sm'], fill=team_colour)
+            else:
+                tmp_draw.text((16, -1), team['team_abrv'], font=self.FONTS['sm'], fill=team_colour)
 
             if self.data['standings']['rank_method'] == 'Points':
                 # Determine placement of team points and add to image.

@@ -1,9 +1,11 @@
 from ..scene import Scene
 from setup.matrix_setup import matrix, matrix_options
 from utils import image_utils
+from data.soccer_data import get_team_logo
 
 from PIL import Image, ImageDraw
 from time import sleep
+from pathlib import Path
 import math
 
 
@@ -102,6 +104,10 @@ class FavTeamNextGameScene(Scene):
 
         # Determine the path of the image to load. Standard path or alt logo.
         logo_path = f'assets/images/{self.LEAGUE}/teams/{team}.png' if team not in self.alt_logos else f'assets/images/{self.LEAGUE}/teams_alt/{team}_{self.alt_logos[team]}.png'
+
+        if not Path(logo_path).exists():
+            get_team_logo(team, self)
+            image_utils.process_in_place(logo_path)
 
         # Load, crop, and resize the team logo.
         team_logo = Image.open(logo_path)

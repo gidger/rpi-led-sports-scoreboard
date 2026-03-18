@@ -1,9 +1,11 @@
 from ..scene import Scene
 from setup.matrix_setup import matrix, matrix_options
 from utils import image_utils
+from data.soccer_data import get_team_logo
 
 from PIL import Image, ImageDraw
 from time import sleep
+from pathlib import Path
 import math
 
 
@@ -11,6 +13,8 @@ class GamesScene(Scene):
     """ Generic game scene, regardless of league/sport. Contains functionality to build score, no game today, etc. images and display them on the matrix.
     This class extends the general Scene class and is extended by those of specific leagues. An object of this class type is never created directly.
     """
+    #Soccer_Leagues = ['MLS', 'EPL', 'LL', 'BL', 'SA', 'L1', 'CONCACAF']
+    
     
     def __init__(self):
         """ Creates Image objects to be displayed on the matrix and ImageDraw objects allowing us to add logos, text, etc. to each image.
@@ -150,7 +154,8 @@ class GamesScene(Scene):
         self.draw['centre'].text((16, 1), 'l', font=self.FONTS['sm'], fill=self.COLOURS['white'])
 
         # If game ended in OT, etc. add that to the centre image.
-        self.add_final_playing_period_to_image(game) # This exists in child classes.
+        if not self.settings['soccer_league']:
+            self.add_final_playing_period_to_image(game) # This exists in child classes.
 
         # Add the current score to the centre image, noting if either team scored since previous data pull.
         self.add_score_to_image(game, overriding_team=game['scoring_team'], colour_override=self.COLOURS['red'])
@@ -172,7 +177,38 @@ class GamesScene(Scene):
             row_offset = 13 # Vertical offset if adding time remaining for an ongoing game vs start time of day for a game not started.
 
         # Add time to the centre image.
-        if time_str[0] == "2": # If the first digit of the time is 2. Will only occur when there's 20 mins left in a hockey period, never for a start time.
+        
+        if self.settings['soccer_league']:
+            if not game['has_started']:
+                if time_str[0] == "0" : 
+                    # Hour/minutes.
+                    self.draw['centre'].text((2, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                    # Colon.
+                    self.draw['centre'].point((7, 11 + row_offset), fill=self.COLOURS['white'])
+                    self.draw['centre'].point((7, 13 + row_offset), fill=self.COLOURS['white'])
+                    # Minutes/seconds.
+                    self.draw['centre'].text((9, 8 + row_offset), time_str[3], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                    self.draw['centre'].text((14, 8 + row_offset), time_str[4], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                else: 
+                    self.draw['centre'].text((0, 8 + row_offset), time_str[0], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                    self.draw['centre'].text((4, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                    # Colon (manual dots since the font's colon looks funny).
+                    self.draw['centre'].point((9, 11 + row_offset), fill=self.COLOURS['white'])
+                    self.draw['centre'].point((9, 13 + row_offset), fill=self.COLOURS['white'])
+                    # Seconds.
+                    self.draw['centre'].text((11, 8 + row_offset), time_str[3], font=self.FONTS['sm'], fill=self.COLOURS['white']) # Skipping time_str[2] as that would be the colon.
+                    self.draw['centre'].text((15, 8 + row_offset), time_str[4], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            elif '+' in time_str:
+                self.draw['centre'].text((4, 7 + row_offset), time_str.split('+')[0], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((4, 13 + row_offset), ('+' + time_str.split('+')[1]), font=self.FONTS['sm'], fill=self.COLOURS['white'])
+
+            else:
+                self.draw['centre'].text((4, 9 + row_offset), time_str, font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            #self.draw['centre'].text((8, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            # Colon (manual dots since the font's colon looks funny).
+            #self.draw['centre'].text((11, 8 + row_offset), "'", font=self.FONTS['sm'], fill=self.COLOURS['white'])
+
+        elif time_str[0] == "2": # If the first digit of the time is 2. Will only occur when there's 20 mins left in a hockey period, never for a start time.
             # Minutes.
             self.draw['centre'].text((0, 8 + row_offset), time_str[0], font=self.FONTS['sm'], fill=self.COLOURS['white'])
             self.draw['centre'].text((4, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])
@@ -214,8 +250,14 @@ class GamesScene(Scene):
         """
         
         # Determine the path of the image to load. Standard path or alt logo.
+        
         away_logo_path = f'assets/images/{self.LEAGUE}/teams/{game['away_abrv']}.png' if game['away_abrv'] not in self.alt_logos else f'assets/images/{self.LEAGUE}/teams_alt/{game['away_abrv']}_{self.alt_logos[game['away_abrv']]}.png'
         
+        if not Path(away_logo_path).exists() and self.settings['soccer_league']:
+            print (f'{game['away_abrv']} logo missing')
+            get_team_logo(game['away_abrv'], self)
+            image_utils.process_in_place(away_logo_path)
+
         # Load, crop, and resize the away team logo.
         away_logo = Image.open(away_logo_path)
         away_logo = image_utils.crop_image(away_logo)
@@ -230,6 +272,11 @@ class GamesScene(Scene):
 
         # Determine the path of the image to load. Standard path or alt logo.
         home_logo_path = f'assets/images/{self.LEAGUE}/teams/{game['home_abrv']}.png' if game['home_abrv'] not in self.alt_logos else f'assets/images/{self.LEAGUE}/teams_alt/{game['home_abrv']}_{self.alt_logos[game['home_abrv']]}.png'
+
+        if not Path(home_logo_path).exists() and self.settings['soccer_league']:
+            print (f'{game['home_abrv']} logo missing')
+            get_team_logo(game['home_abrv'], self)
+            image_utils.process_in_place(home_logo_path)
 
         # Load, crop, and resize the home team logo.
         home_logo = Image.open(home_logo_path)

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scoreboard Controller</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/Web/favicon.ico') }}">
+
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f1f5f9;
+            --accent: #3b82f6;
+            --border: #334155;
+        }
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-color);
+            margin: 0; padding: 20px;
+        }
+        .container { max-width: 900px; margin: auto; padding-bottom: 100px; }
+        .header { margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        
+        .league-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            display: flex; align-items: center;
+        }
+        .league-info { 
+ 	    width: 120px; 
+  	    text-align: center; 
+	    margin-right: 30px; 
+    	    flex-shrink: 0; 
+    	    display: flex; 
+    	    flex-direction: column; 
+    	    align-items: center; 
+	}
+	.league-logo { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.1)); }
+        .toggle-group { flex-grow: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+
+        /* Slide Toggle CSS */
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; margin-right: 12px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #475569; transition: .3s; border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .3s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .scene-label { 
+    	    display: flex; 
+    	    align-items: center; 
+    	    cursor: pointer; 
+    	    font-size: 14px; 
+	}
+	.btn-save {
+            position: fixed; bottom: 30px; right: 30px;
+            background: var(--accent); color: white; border: none;
+            padding: 15px 40px; border-radius: 50px; font-weight: bold;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4); cursor: pointer;
+            z-index: 100;
+        }
+        .btn-save:hover { background: #2563eb; transform: translateY(-2px); transition: 0.2s; }
+        .select-all { color: var(--accent); font-size: 12px; text-decoration: underline; cursor: pointer; display: block; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Scoreboard Setup</h1>
+            <p style="color: #94a3b8;">Enable or disable scenes for the LED matrix.</p>
+        </div>
+
+        <form method="POST">
+            {% for league, scenes in leagues.items() %}
+            {% set folder = league.lower().replace(' ', '') %}
+            <div class="league-card">
+                <div class="league-info">
+        		<img src="/static/images/{{ league }}/league/{{ league }}.png" class="league-logo" alt="{{ league }}">
+        		<span style="display:block; font-weight:bold; margin-bottom: 8px;">
+				{{ display_names.get(league, league_code) }}
+			</span>
+        
+        		<label class="all-toggle-label">
+            			<div class="switch" style="margin-right: 5px;">
+                			<input type="checkbox" class="master-cb-{{ league }}" onchange="toggleLeague('{{ league }}')">
+                			<span class="slider"></span>
+            			</div>
+            			<span style="font-size: 10px; text-transform: uppercase; color: #94a3b8;">All</span>
+        		</label>
+    		</div>
+
+		<div class="toggle-group">
+                    {% for scene in scenes %}
+   		    <label class="scene-label">
+    			<div class="switch">
+				<input type="checkbox" name="scenes" value="{{ scene }}" 
+               				class="cb-{{ league }}" 
+					onchange="updateToggleAllState('{{ league }}')"
+					{% if scene in active_scenes %}checked{% endif %}>
+        			<span class="slider"></span>
+    			</div>
+    			{{ format_label(scene) }}
+		    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn-save">Save & Apply</button>
+        </form>
+    </div>
+
+    <script>
+    	// 1. Run this when the page loads to set the "Toggle All" state
+	    document.addEventListener("DOMContentLoaded", function() {
+	        {% for league in leagues %}
+	        updateToggleAllState('{{ league }}');
+	        {% endfor %}
+	    });
+
+    	function toggleLeague(league) {
+        	const checkboxes = document.querySelectorAll('.cb-' + league);
+        	const anyUnchecked = Array.from(checkboxes).some(cb => !cb.checked);
+        
+        	checkboxes.forEach(cb => cb.checked = anyUnchecked);
+        
+        	// Update the slider visual
+        	updateToggleAllState(league);
+    	}
+
+    	function updateToggleAllState(league) {
+        	const checkboxes = document.querySelectorAll('.cb-' + league);
+        	const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        	const masterToggle = document.querySelector('.master-cb-' + league);
+        	if (masterToggle) {
+            		masterToggle.checked = allChecked;
+        	}
+    	}
+    </script>
+
+</body>
+</html>

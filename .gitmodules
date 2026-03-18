@@ -1,3 +1,0 @@
-[submodule "submodules/rpi-rgb-led-matrix"]
-	path = submodules/rpi-rgb-led-matrix
-	url = https://github.com/gidger/rpi-rgb-led-matrix-python3.12-fix.git
