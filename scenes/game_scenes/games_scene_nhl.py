@@ -178,7 +178,7 @@ class NHLGamesScene(GamesScene):
 
         # Otherwise, we're in 2OT, or later. Calculate the number of OT periods and add that to the image.
         elif game['period_type'] == 'OT':
-            per = f'{game['per_number'] - 3}{game['period_type']}'
+            per = f'{game['period_num'] - 3}{game['period_type']}'
             self.draw['centre'].text((1, -1), per, font=self.FONTS['med'], fill=self.COLOURS['white'])
 
 
