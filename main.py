@@ -7,6 +7,7 @@ from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_nba import NBAFav
 from scenes.standings_scenes.standings_scene_nba import NBAStandingsScene
 
 from scenes.game_scenes.games_scene_ncaa import NCAAGamesScene
+from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_ncaa import NCAAFavTeamNextGameScene
 
 from scenes.game_scenes.games_scene_pwhl import PWHLGamesScene
 from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_pwhl import PWHLFavTeamNextGameScene
@@ -37,7 +38,11 @@ def run_scoreboard():
         'nba_fav_team_next_game': NBAFavTeamNextGameScene(),
         'nba_standings': NBAStandingsScene(),
 
-        'ncaa_games': NCAAGamesScene(),
+        'ncaa_mens_games': NCAAGamesScene('NCAA-MENS'),
+        'ncaa_mens_fav_team_next_game': NCAAFavTeamNextGameScene('NCAA-MENS'),
+
+        'ncaa_womens_games': NCAAGamesScene('NCAA-WOMENS'),
+        'ncaa_womens_fav_team_next_game': NCAAFavTeamNextGameScene('NCAA-WOMENS'),
         
         'pwhl_games': PWHLGamesScene(),
         'pwhl_fav_team_next_game': PWHLFavTeamNextGameScene(),

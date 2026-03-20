@@ -161,9 +161,9 @@ class GamesScene(Scene):
         self.add_score_to_image(game, overriding_team=game['scoring_team'], colour_override=self.COLOURS['red'])
 
         #If NCAA add ranking to final score display
-        if self.LEAGUE == 'NCAA' and game['period_num'] < 3:
-            self.draw['centre'].text((0, 8), str(game['away_rank']), font=self.FONTS['sm'], fill=self.COLOURS['white'])
-            self.draw['centre'].text((15, 8), str(game['home_rank']), font=self.FONTS['sm'], fill=self.COLOURS['white'])
+        if (self.LEAGUE == 'NCAA-MENS' and game['period_num'] < 3) or (self.LEAGUE == 'NCAA-WOMENS' and game['period_num'] < 5):
+            self.draw['centre'].text((-1, 8), str(game['away_rank']), font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            self.draw['centre'].text((11, 8), str(game['home_rank']), font=self.FONTS['sm'], fill=self.COLOURS['white'])
 
 
     def add_time_to_image(self, game):
@@ -268,11 +268,11 @@ class GamesScene(Scene):
         
         away_logo_path = f'assets/images/{self.LEAGUE}/teams/{game['away_abrv']}.png' if game['away_abrv'] not in self.alt_logos else f'assets/images/{self.LEAGUE}/teams_alt/{game['away_abrv']}_{self.alt_logos[game['away_abrv']]}.png'
         
-        if not Path(away_logo_path).exists() and (self.settings['soccer_league'] or self.LEAGUE == 'NCAA'):
+        if not Path(away_logo_path).exists() and (self.settings['soccer_league'] or self.LEAGUE in ['NCAA-MENS', 'NCAA-WOMENS']):
             print (f'{game['away_abrv']} logo missing')
             if self.settings['soccer_league'] :
                 get_team_logo(game['away_abrv'], self)
-            elif self.LEAGUE == 'NCAA' :
+            elif self.LEAGUE in ['NCAA-MENS', 'NCAA-WOMENS'] :
                 get_ncaa_team_logo(game['away_abrv'], self)
             image_utils.process_in_place(away_logo_path)
 
@@ -291,11 +291,11 @@ class GamesScene(Scene):
         # Determine the path of the image to load. Standard path or alt logo.
         home_logo_path = f'assets/images/{self.LEAGUE}/teams/{game['home_abrv']}.png' if game['home_abrv'] not in self.alt_logos else f'assets/images/{self.LEAGUE}/teams_alt/{game['home_abrv']}_{self.alt_logos[game['home_abrv']]}.png'
 
-        if not Path(home_logo_path).exists() and (self.settings['soccer_league'] or self.LEAGUE == 'NCAA') :
+        if not Path(home_logo_path).exists() and (self.settings['soccer_league'] or self.LEAGUE in ['NCAA-MENS', 'NCAA-WOMENS']) :
             print (f'{game['home_abrv']} logo missing')
             if self.settings['soccer_league'] :
                 get_team_logo(game['home_abrv'], self)
-            elif self.LEAGUE == 'NCAA' :
+            elif self.LEAGUE in ['NCAA-MENS', 'NCAA-WOMENS'] :
                 get_ncaa_team_logo(game['home_abrv'], self)
             image_utils.process_in_place(home_logo_path)
 

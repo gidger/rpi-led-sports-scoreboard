@@ -12,13 +12,13 @@ class NCAAGamesScene(GamesScene):
     This class extends the general Scene and GameScene classes. An object of this class type is created when the scoreboard is started.
     """
 
-    def __init__(self):
+    def __init__(self,NCAA_LEAGUE):
         """ Defines the league as input league. Used to identify the correct files when adding logos to images.
         First runs init from the generic GameScene class.
         """
         
         super().__init__()
-        self.LEAGUE = 'NCAA'
+        self.LEAGUE = NCAA_LEAGUE
 
 
     def display_scene(self):
@@ -150,27 +150,72 @@ class NCAAGamesScene(GamesScene):
             game (dict): Dictionary with all details of a specific game.
         """
 
-        # If intermission, add "INT" to the image.
-        if game['is_intermission'] and game['period_num'] == 1 :
-            self.draw['centre'].text((4, 8), 'HT', font=self.FONTS['med'], fill=self.COLOURS['white'])
-        elif game['is_intermission'] and game['period_num'] > 1 :
-            self.draw['centre'].text((4, 8), 'End', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+        if self.LEAGUE == 'NCAA-MENS' :
+            # If intermission, add "INT" to the image.
+            if game['is_intermission'] and game['period_num'] == 1 :
+                self.draw['centre'].text((4, 8), 'HT', font=self.FONTS['med'], fill=self.COLOURS['white'])
+            elif game['is_intermission'] and game['period_num'] > 1 :
+                self.draw['centre'].text((4, 8), 'End', font=self.FONTS['sm'], fill=self.COLOURS['white'])
 
-        # If the first period, add "1st" to the image.
-        if game['period_num'] == 1:
-            self.draw['centre'].text((4, -1), '1', font=self.FONTS['med'], fill=self.COLOURS['white'])
-            self.draw['centre'].text((8, -1), 's', font=self.FONTS['sm'], fill=self.COLOURS['white'])
-            self.draw['centre'].text((12, -1), 't', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            # If the first period, add "1st" to the image.
+            if game['period_num'] == 1:
+                self.draw['centre'].text((4, -1), '1', font=self.FONTS['med'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((8, -1), 's', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((12, -1), 't', font=self.FONTS['sm'], fill=self.COLOURS['white'])
 
-        # If the second period, add "2nd" to the image.
-        elif game['period_num'] == 2:
-            self.draw['centre'].text((3, -1), '2', font=self.FONTS['med'], fill=self.COLOURS['white'])
-            self.draw['centre'].text((9, -1), 'n', font=self.FONTS['sm'], fill=self.COLOURS['white'])
-            self.draw['centre'].text((13, -1), 'd', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            # If the second period, add "2nd" to the image.
+            elif game['period_num'] == 2:
+                self.draw['centre'].text((3, -1), '2', font=self.FONTS['med'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((9, -1), 'n', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((13, -1), 'd', font=self.FONTS['sm'], fill=self.COLOURS['white'])
 
-        # If after second half, add "OT" to the image.
-        elif game['period_num'] > 2:
-            self.draw['centre'].text((5, -1), 'OT', font=self.FONTS['med'], fill=self.COLOURS['white'])
+            # If after second half, add "OT" to the image.
+            elif game['period_num'] == 3:
+                self.draw['centre'].text((5, -1), 'OT', font=self.FONTS['med'], fill=self.COLOURS['white'])
+
+            elif game['period_num'] > 3:
+                per = f'{game['period_num'] - 2}{game['period_type']}'
+                self.draw['centre'].text((1, -1), per, font=self.FONTS['med'], fill=self.COLOURS['white'])
+
+        elif self.LEAGUE == 'NCAA-WOMENS' :
+            # If intermission, add "INT" to the image.
+            if game['is_intermission'] and game['period_num'] == 1 :
+                self.draw['centre'].text((4, 8), 'HT', font=self.FONTS['med'], fill=self.COLOURS['white'])
+            elif game['is_intermission'] and game['period_num'] > 4 :
+                self.draw['centre'].text((4, 8), 'End', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+
+            # If the first period, add "1st" to the image.
+            if game['period_num'] == 1:
+                self.draw['centre'].text((4, -1), '1', font=self.FONTS['med'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((8, -1), 's', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((12, -1), 't', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+
+            # If the second period, add "2nd" to the image.
+            elif game['period_num'] == 2:
+                self.draw['centre'].text((3, -1), '2', font=self.FONTS['med'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((9, -1), 'n', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((13, -1), 'd', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+
+                # If the third qtr, add "3rd" to the image.
+            elif game['period_num'] == 3:
+                self.draw['centre'].text((3, -1), '3', font=self.FONTS['med'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((9, -1), 'r', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((13, -1), 'd', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+
+            # If the fourth qtr, add "4th" to the image.
+            elif game['period_num'] == 4:
+                self.draw['centre'].text((3, -1), '4', font=self.FONTS['med'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((8, -1), 't', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['centre'].text((13, -1), 'h', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+
+            # If in single OT, add that to the image.
+            elif game['period_num'] == 5:
+                self.draw['centre'].text((4, -1), game['period_type'], font=self.FONTS['med'], fill=self.COLOURS['white'])
+
+            # Otherwise, we're in 2OT, or later. Calculate the number of OT periods and add that to the image.
+            elif game['period_num'] > 5:
+                per = f'{game['period_num'] - 4}{game['period_type']}'
+                self.draw['centre'].text((1, -1), per, font=self.FONTS['med'], fill=self.COLOURS['white'])
 
     def add_final_playing_period_to_image(self, game):
         """ Adds final playing period to the centre image if game ended in OT, xOT, or a SO.
@@ -178,14 +223,26 @@ class NCAAGamesScene(GamesScene):
         Args:
             game (dict): Dictionary with all details of a specific game.
         """       
-        # If game ended in a the first OT, add that to the centre image.
-        if game['period_num'] == 3:
-            self.draw['centre'].text((4, 8), game['period_type'], font=self.FONTS['med'], fill=self.COLOURS['white'])
 
-        # Or if in 2OT or later. Calculate the number of OT periods and add that to the centre image.
-        elif game['period_num'] > 3:
-            per = f'{game['period_num'] - 2}{game['period_type']}'
-            self.draw['centre'].text((1, 8), per, font=self.FONTS['med'], fill=self.COLOURS['white'])
+        if self.LEAGUE == 'NCAA-Mens' :   
+            # If game ended in a the first OT, add that to the centre image.
+            if game['period_num'] == 3:
+                self.draw['centre'].text((4, 8), game['period_type'], font=self.FONTS['med'], fill=self.COLOURS['white'])
+
+            # Or if in 2OT or later. Calculate the number of OT periods and add that to the centre image.
+            elif game['period_num'] > 3:
+                per = f'{game['period_num'] - 2}{game['period_type']}'
+                self.draw['centre'].text((1, 8), per, font=self.FONTS['med'], fill=self.COLOURS['white'])
+        
+        elif self.LEAGUE == 'NCAA-WOMENS' :
+            # If game ended in a the first OT, add that to the centre image.
+            if game['period_num'] == 5:
+                self.draw['centre'].text((4, 8), game['period_type'], font=self.FONTS['med'], fill=self.COLOURS['white'])
+
+            # Or if in 2OT or later. Calculate the number of OT periods and add that to the centre image.
+            elif game['period_num'] > 5:
+                per = f'{game['period_num'] - 4}{game['period_type']}'
+                self.draw['centre'].text((1, 8), per, font=self.FONTS['med'], fill=self.COLOURS['white'])
 
     def should_display_time_remaining_in_playing_period(self, game):
         """ Determines if the time remaining in the playing period should be added to the centre image.

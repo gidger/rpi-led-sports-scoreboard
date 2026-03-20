@@ -4,7 +4,6 @@ from datetime import timezone as tz
 from datetime import timedelta as td
 from pathlib import Path
 
-
 def get_games(date, self):
     """ Loads league game data for the provided date.
 
@@ -20,7 +19,7 @@ def get_games(date, self):
 
     # Call the ESPN API for the date specified and store the JSON results.
 
-    url = 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?dates='
+    url = f'https://site.api.espn.com/apis/site/v2/sports/basketball/{self.LEAGUE.split('-')[-1].lower()}-college-basketball/scoreboard?dates='
     games_response = session.get(url=f"{url}{date.strftime(format='%Y%m%d')}")
     games_json = games_response.json()['events']
 
@@ -72,7 +71,7 @@ def get_next_game(team, self):
     team_id = get_team_id(team, self)
 
     # Call the ESPN schedule API for the team specified and store the JSON results.
-    url = f'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/{team_id}'
+    url = f'https://site.api.espn.com/apis/site/v2/sports/basketball/{self.LEAGUE.split('-')[-1].lower()}-college-basketball/teams/{team_id}'
     next_game_response = session.get(url=url)
     next_game_json = next_game_response.json()['team']['nextEvent']
     next_game_details = next_game_json
@@ -94,7 +93,7 @@ def get_next_game(team, self):
     return None
 
 def get_team_id(team, self):
-    url = 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?dates='
+    url = f'https://site.api.espn.com/apis/site/v2/sports/basketball/{self.LEAGUE.split('-')[-1].lower()}-college-basketball/scoreboard?dates='
     teams_response = session.get(url=f"{url}{(dt.now()).strftime(format='%Y%m%d')}")
     teams_json = teams_response.json()['events']
     for game in teams_json:
@@ -117,7 +116,7 @@ def get_team_id(team, self):
 def get_team_logo(team, self):
     output_path = f'assets/images/{self.LEAGUE}/teams/{team}.png'
     team_id = get_team_id(team, self)
-    url = f'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/{team_id}'
+    url = f'https://site.api.espn.com/apis/site/v2/sports/basketball/{self.LEAGUE.split('-')[-1].lower()}-college-basketball/teams/{team_id}'
     team_response = session.get(url=url)
     team_json = team_response.json()
 
