@@ -6,6 +6,9 @@ from scenes.game_scenes.games_scene_nba import NBAGamesScene
 from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_nba import NBAFavTeamNextGameScene
 from scenes.standings_scenes.standings_scene_nba import NBAStandingsScene
 
+from scenes.game_scenes.games_scene_ncaa import NCAAGamesScene
+from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_ncaa import NCAAFavTeamNextGameScene
+
 from scenes.game_scenes.games_scene_pwhl import PWHLGamesScene
 from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_pwhl import PWHLFavTeamNextGameScene
 from scenes.standings_scenes.standings_scene_pwhl import PWHLStandingsScene
@@ -17,8 +20,7 @@ from scenes.standings_scenes.standings_scene_soccer import SoccerStandingsScene
 from scenes.f1_scenes.f1_race_preview import F1RacePreviewScene
 from scenes.f1_scenes.f1_race_weekend import F1RaceWeekendScene
 from scenes.f1_scenes.f1_next_race import F1NextRaceScene
-from scenes.f1_scenes.f1_driver_standings import F1DriverStandingsScene
-from scenes.f1_scenes.f1_constructor_standings import F1ConstructorStandingsScene
+from scenes.standings_scenes.standings_scene_f1 import F1StandingsScene
 
 from scenes.standings_scenes.standings_scene_f1 import F1StandingsScene
 from setup.matrix_setup import matrix, determine_matrix_brightness
@@ -35,6 +37,12 @@ def run_scoreboard():
         'nba_games': NBAGamesScene(),
         'nba_fav_team_next_game': NBAFavTeamNextGameScene(),
         'nba_standings': NBAStandingsScene(),
+
+        'ncaa_mens_games': NCAAGamesScene('NCAA-MENS'),
+        'ncaa_mens_fav_team_next_game': NCAAFavTeamNextGameScene('NCAA-MENS'),
+
+        'ncaa_womens_games': NCAAGamesScene('NCAA-WOMENS'),
+        'ncaa_womens_fav_team_next_game': NCAAFavTeamNextGameScene('NCAA-WOMENS'),
         
         'pwhl_games': PWHLGamesScene(),
         'pwhl_fav_team_next_game': PWHLFavTeamNextGameScene(),

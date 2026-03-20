@@ -6,6 +6,10 @@ scene_order:
   - nba_fav_team_next_game
   - nba_games
   - nba_standings
+  - ncaa_mens_fav_team_next_game
+  - ncaa_mens_games
+  - ncaa_womens_fav_team_next_game
+  - ncaa_womens_games
   - pwhl_fav_team_next_game
   - pwhl_games
   - pwhl_standings
@@ -57,6 +61,10 @@ favourite_teams:
 
   f1:
 
+  ncaa-mens:
+
+  ncaa-womens:
+
 favourite_drivers:
   - HAM   # Lewis Hamilton (Ferrari)
   - NOR   # Lando Norris (McLaren)
@@ -82,6 +90,10 @@ alt_logos:
   l1:
 
   f1:
+
+  ncaa-mens:
+
+  ncaa-womens:
 
 # Settings for each scene.
 scene_settings:
@@ -154,6 +166,74 @@ scene_settings:
       display_for:
         - conference
         # - division
+
+  ncaa-mens:
+    games: # nba_games scene.
+      transition: 'modern'
+      splash:
+        display_splash: True
+        splash_display_duration: 2
+      game_display_duration: 3.5
+      score_alerting:
+        score_coloured: False
+        score_fade_animation: False
+      rollover:
+        rollover_start_time_local: '07:00'
+        show_completed_games_until_rollover_end_time: True
+        rollover_end_time_local: '12:00'
+      soccer_league: False
+
+    fav_team_next_game: # nba_fav_team_next_game scene.
+      transition: 'modern'
+      display_duration: 3.5
+      display_if_in_progress: False
+
+    standings: # nba_standings scene.
+      transition: 'modern'
+      splash:
+        display_splash: True
+        splash_display_duration: 2
+      scroll:
+        scroll_pause_duration: 1
+        scroll_frame_duration: 0.075
+      highlight_fav_teams: True
+      display_for:
+        - conference
+        # - division
+
+  ncaa-womens:
+    games: # nba_games scene.
+      transition: 'modern'
+      splash:
+        display_splash: True
+        splash_display_duration: 2
+      game_display_duration: 3.5
+      score_alerting:
+        score_coloured: False
+        score_fade_animation: False
+      rollover:
+        rollover_start_time_local: '07:00'
+        show_completed_games_until_rollover_end_time: True
+        rollover_end_time_local: '12:00'
+      soccer_league: False
+
+    fav_team_next_game: # nba_fav_team_next_game scene.
+      transition: 'modern'
+      display_duration: 3.5
+      display_if_in_progress: False
+
+    standings: # nba_standings scene.
+      transition: 'modern'
+      splash:
+        display_splash: True
+        splash_display_duration: 2
+      scroll:
+        scroll_pause_duration: 1
+        scroll_frame_duration: 0.075
+      highlight_fav_teams: True
+      display_for:
+        - conference
+        # - division      
 
   pwhl:
     games: # pwhl_games scene.
@@ -458,4 +538,4 @@ brightness:
 # Hardware configuration details.
 hardware_config:
   hardware_mapping: 'adafruit-hat-pwm' # Adjust to match your hardware.
-  gpio_slowdown: 4 # 0-4. Adjust as needed for your hardware.
+  gpio_slowdown: 1 # 0-4. Adjust as needed for your hardware.

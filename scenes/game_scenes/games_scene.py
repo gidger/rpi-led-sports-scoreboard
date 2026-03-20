@@ -2,7 +2,7 @@ from ..scene import Scene
 from setup.matrix_setup import matrix, matrix_options
 from utils import image_utils
 from data.soccer_data import get_team_logo
-
+from data.ncaa_data import get_team_logo as get_ncaa_team_logo
 from PIL import Image, ImageDraw
 from time import sleep
 from pathlib import Path
@@ -160,6 +160,11 @@ class GamesScene(Scene):
         # Add the current score to the centre image, noting if either team scored since previous data pull.
         self.add_score_to_image(game, overriding_team=game['scoring_team'], colour_override=self.COLOURS['red'])
 
+        #If NCAA add ranking to final score display
+        if (self.LEAGUE == 'NCAA-MENS' and game['period_num'] < 3) or (self.LEAGUE == 'NCAA-WOMENS' and game['period_num'] < 5):
+            self.draw['centre'].text((-1, 8), str(game['away_rank']), font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            self.draw['centre'].text((11, 8), str(game['home_rank']), font=self.FONTS['sm'], fill=self.COLOURS['white'])
+
 
     def add_time_to_image(self, game):
         """ Adds the start time or time remaining in the period to the centre image.
@@ -178,7 +183,7 @@ class GamesScene(Scene):
 
         # Add time to the centre image.
         
-        if self.settings['soccer_league']:
+        if self.settings['soccer_league'] :
             if not game['has_started']:
                 if time_str[0] == "0" : 
                     # Hour/minutes.
@@ -208,6 +213,16 @@ class GamesScene(Scene):
             # Colon (manual dots since the font's colon looks funny).
             #self.draw['centre'].text((11, 8 + row_offset), "'", font=self.FONTS['sm'], fill=self.COLOURS['white'])
 
+        elif len(time_str) < 5: # If the first digit of the time is 0. When 0:00-9:59 left in per/qtr, or game start before 10pm.
+            # Hour/minutes.
+            self.draw['centre'].text((2, 8 + row_offset), time_str[0], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            # Colon.
+            self.draw['centre'].point((7, 11 + row_offset), fill=self.COLOURS['white'])
+            self.draw['centre'].point((7, 13 + row_offset), fill=self.COLOURS['white'])
+            # Minutes/seconds.
+            self.draw['centre'].text((9, 8 + row_offset), time_str[2], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+            self.draw['centre'].text((14, 8 + row_offset), time_str[3], font=self.FONTS['sm'], fill=self.COLOURS['white'])
+        
         elif time_str[0] == "2": # If the first digit of the time is 2. Will only occur when there's 20 mins left in a hockey period, never for a start time.
             # Minutes.
             self.draw['centre'].text((0, 8 + row_offset), time_str[0], font=self.FONTS['sm'], fill=self.COLOURS['white'])
@@ -229,7 +244,7 @@ class GamesScene(Scene):
             # Minutes/seconds.
             self.draw['centre'].text((11, 8 + row_offset), time_str[3], font=self.FONTS['sm'], fill=self.COLOURS['white']) # Skipping time_str[2] as that would be the colon.
             self.draw['centre'].text((16, 8 + row_offset), time_str[4], font=self.FONTS['sm'], fill=self.COLOURS['white'])
-
+        
         else: # If the first digit of the time is 0. When 0:00-9:59 left in per/qtr, or game start before 10pm.
             # Hour/minutes.
             self.draw['centre'].text((2, 8 + row_offset), time_str[1], font=self.FONTS['sm'], fill=self.COLOURS['white'])
@@ -253,9 +268,12 @@ class GamesScene(Scene):
         
         away_logo_path = f'assets/images/{self.LEAGUE}/teams/{game['away_abrv']}.png' if game['away_abrv'] not in self.alt_logos else f'assets/images/{self.LEAGUE}/teams_alt/{game['away_abrv']}_{self.alt_logos[game['away_abrv']]}.png'
         
-        if not Path(away_logo_path).exists() and self.settings['soccer_league']:
+        if not Path(away_logo_path).exists() and (self.settings['soccer_league'] or self.LEAGUE in ['NCAA-MENS', 'NCAA-WOMENS']):
             print (f'{game['away_abrv']} logo missing')
-            get_team_logo(game['away_abrv'], self)
+            if self.settings['soccer_league'] :
+                get_team_logo(game['away_abrv'], self)
+            elif self.LEAGUE in ['NCAA-MENS', 'NCAA-WOMENS'] :
+                get_ncaa_team_logo(game['away_abrv'], self)
             image_utils.process_in_place(away_logo_path)
 
         # Load, crop, and resize the away team logo.
@@ -273,9 +291,12 @@ class GamesScene(Scene):
         # Determine the path of the image to load. Standard path or alt logo.
         home_logo_path = f'assets/images/{self.LEAGUE}/teams/{game['home_abrv']}.png' if game['home_abrv'] not in self.alt_logos else f'assets/images/{self.LEAGUE}/teams_alt/{game['home_abrv']}_{self.alt_logos[game['home_abrv']]}.png'
 
-        if not Path(home_logo_path).exists() and self.settings['soccer_league']:
+        if not Path(home_logo_path).exists() and (self.settings['soccer_league'] or self.LEAGUE in ['NCAA-MENS', 'NCAA-WOMENS']) :
             print (f'{game['home_abrv']} logo missing')
-            get_team_logo(game['home_abrv'], self)
+            if self.settings['soccer_league'] :
+                get_team_logo(game['home_abrv'], self)
+            elif self.LEAGUE in ['NCAA-MENS', 'NCAA-WOMENS'] :
+                get_ncaa_team_logo(game['home_abrv'], self)
             image_utils.process_in_place(home_logo_path)
 
         # Load, crop, and resize the home team logo.
@@ -341,6 +362,7 @@ class GamesScene(Scene):
             home_score_col_start = 20 - (5 * home_score_digits - 1)
             self.draw['centre'].text((home_score_col_start, home_team_row_start), str(game['home_score']), font=self.FONTS['sm'], fill=colour_home)
 
+           
 
     def add_league_logo_to_image(self):
         """ Adds logo for a specific league to the full image.
