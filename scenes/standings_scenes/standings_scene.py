@@ -64,15 +64,15 @@ class StandingsScene(Scene):
         self.draw['full'].text((day_col, 12), day, font=self.FONTS['sm'], fill=self.COLOURS['white'])
 
 
-    def build_standings_image(self, type, name, standings, playoff_cutoff_hard=0, playoff_cutoff_soft=0):
+    def build_standings_image(self, standings, standing_type=None, playoff_cutoff_hard=0, playoff_cutoff_soft=0, relegation_cutoff=0):
         """ Build overall standings image. Includes standing type in sidebar, and the actual standings by team.
 
         Args:
-            type (str): Type of standing image that will be build (e.g., division, conference, etc.).
-            name (str): Name of that type to display (e.g., 'Atl').
             standings (list): List of standing detail dicts.
+            standing_type (dict, optional): Additional details to display. This is for things like 'EC' and 'WC' in NBA conference standings, or 'Cen' and 'Atl' in NHL division standings. Defaults to None.
             playoff_cutoff_hard (int, optional): How many teams above the hard cutoff for playoffs. Impacts line colours. Defaults to 0.
             playoff_cutoff_soft (int, optional): How many teams above the soft cutoff for playoffs (think NBA play-in). Impacts line colours. Defaults to 0.
+            relegation_cutoff (int, optional): How many teams above the relegation cutoff. Impacts line colours. Defaults to 0.
         """
 
         # For the sideways text in the sidebar, create a temp image, then rotate that.
@@ -80,9 +80,21 @@ class StandingsScene(Scene):
         tmp_draw = ImageDraw.Draw(tmp_img)
         
         # First, add the background and text to the non-rotated image.
-        tmp_draw.rectangle([(0, 0), (32, 8)], fill=self.COLOURS['white'])
+        tmp_draw.rectangle([(0, 0), (31, 7)], fill=self.COLOURS['white'])
         tmp_draw.text((1, 0), self.LEAGUE, font=self.FONTS['sm'], fill=self.COLOURS['black'])
-        tmp_draw.text((17, 0), name, font=self.FONTS['sm'], fill=self.COLOURS['black'])
+
+        # If standing type provided, add those as well. If nothing provided, will just display the league name.
+        if standing_type:
+            # Determine horizontal location based on length of the standing type, and add to image.
+            det_len = len(standing_type)
+            if det_len == 2:
+                standing_type_col = 22
+            elif det_len == 3:
+                standing_type_col = 17
+            else: # If longer than 4 char, string will be truncated on matrix. This should not happen with correct configuration.
+                standing_type_col = 12
+
+            tmp_draw.text((standing_type_col, 0), standing_type, font=self.FONTS['sm'], fill=self.COLOURS['black'])
         
         # Then rotate and paste onto the side image.
         tmp_img = tmp_img.rotate(90, expand=True)
@@ -92,13 +104,14 @@ class StandingsScene(Scene):
         self.build_standing_row_images(standings, playoff_cutoff_hard, playoff_cutoff_soft)
 
 
-    def build_standing_row_images(self, standings, playoff_cutoff_hard=0, playoff_cutoff_soft=0):
+    def build_standing_row_images(self, standings, playoff_cutoff_hard=0, playoff_cutoff_soft=0, relegation_cutoff=0):
         """ Builds images for each standing row (each team + details), as well as one for all the standings.
 
         Args:
             standings (list): List of standing detail dicts.
             playoff_cutoff_hard (int, optional): How many teams above the hard cutoff for playoffs. Impacts line colours. Defaults to 0.
             playoff_cutoff_soft (int, optional): How many teams above the soft cutoff for playoffs (think NBA play-in). Impacts line colours. Defaults to 0.
+            relegation_cutoff (int, optional): How many teams above the relegation cutoff. Impacts line colours. Defaults to 0.
         """
 
         # Reset standing rows back to an empty list and note the number of teams to display.
@@ -111,11 +124,13 @@ class StandingsScene(Scene):
             tmp_img = Image.new('RGB', (self.images['standings'].size[0], 8))
             tmp_draw = ImageDraw.Draw(tmp_img)
 
-            # Determine the horizontal line colour based on the provided playoff cutoff(s).
+            # Determine the horizontal line colour based on the provided playoff/relegation cutoff(s).
             if row == playoff_cutoff_hard-1:
                 line_colour = self.COLOURS['red']
             elif row == playoff_cutoff_soft-1:
                 line_colour = self.COLOURS['green']
+            elif row == relegation_cutoff-1:
+                line_colour = self.COLOURS['red']
             else:
                 line_colour = self.COLOURS['grey_dark']
             
