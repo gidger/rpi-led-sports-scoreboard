@@ -120,6 +120,7 @@ def get_standings():
         'league': {
             'PWHL': { # Exists to match structure needed for other standing types.
                 'rank_method': 'Points',
+                'playoff_cutoff_hard': 4,
                 'team_standings': [] # Will be populated w/ the API results.
             }
         }
