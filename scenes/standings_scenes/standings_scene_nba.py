@@ -22,7 +22,7 @@ class NBAStandingsScene(StandingsScene):
 
         # Add additional colour needed.
         self.COLOURS.update({
-            'sidebar_highlight': (38, 65, 133) # NBA blue.
+            'sidebar_highlight': (212, 54, 47) # NBA red.
         })
 
 
