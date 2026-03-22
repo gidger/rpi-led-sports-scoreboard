@@ -22,7 +22,7 @@ class NHLStandingsScene(StandingsScene):
 
         # Add additional colour needed.
         self.COLOURS.update({
-            'sidebar_highlight': (235, 93, 42) # Vintage NHL orange.
+            'sidebar_highlight': (77, 84, 98) # NHL grey.
         })
 
 

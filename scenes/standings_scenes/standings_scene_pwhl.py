@@ -18,7 +18,7 @@ class PWHLStandingsScene(StandingsScene):
 
         # Add additional colour needed.
         self.COLOURS.update({
-            'sidebar_highlight': (119, 86, 169) # PWHL purple.
+            'sidebar_highlight': (46, 8, 135) # PWHL purple.
         })
 
 
