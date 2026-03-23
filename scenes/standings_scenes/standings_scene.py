@@ -64,15 +64,13 @@ class StandingsScene(Scene):
         self.draw['full'].text((day_col, 12), day, font=self.FONTS['sm'], fill=self.COLOURS['white'])
 
 
-    def build_standings_image(self, type, name, standings, playoff_cutoff_hard=0, playoff_cutoff_soft=0):
+    # def build_standings_image(self, standing, rank_method, standing_type, standing_type_extended=None, playoff_cutoff_hard=0, playoff_cutoff_soft=0, relegation_cutoff=0):
+    def build_standings_image(self, standing_details):
         """ Build overall standings image. Includes standing type in sidebar, and the actual standings by team.
 
         Args:
-            type (str): Type of standing image that will be build (e.g., division, conference, etc.).
-            name (str): Name of that type to display (e.g., 'Atl').
-            standings (list): List of standing detail dicts.
-            playoff_cutoff_hard (int, optional): How many teams above the hard cutoff for playoffs. Impacts line colours. Defaults to 0.
-            playoff_cutoff_soft (int, optional): How many teams above the soft cutoff for playoffs (think NBA play-in). Impacts line colours. Defaults to 0.
+            standing_details (dict): Dict containing all details needed to build the standings image. Expected to contain at least a 'team_standings' key with a list of dicts with standings, and a 'rank_method' key with the method used to rank teams (e.g. 'Points', 'Win Percentage', etc.).
+                                     May also contain keys for 'playoff_cutoff_hard', 'playoff_cutoff_soft', and 'relegation_cutoff' to determine where to place coloured lines in the standings.
         """
 
         # For the sideways text in the sidebar, create a temp image, then rotate that.
@@ -80,42 +78,54 @@ class StandingsScene(Scene):
         tmp_draw = ImageDraw.Draw(tmp_img)
         
         # First, add the background and text to the non-rotated image.
-        tmp_draw.rectangle([(0, 0), (32, 8)], fill=self.COLOURS['white'])
+        tmp_draw.rectangle([(0, 0), (31, 7)], fill=self.COLOURS['white'])
         tmp_draw.text((1, 0), self.LEAGUE, font=self.FONTS['sm'], fill=self.COLOURS['black'])
-        tmp_draw.text((17, 0), name, font=self.FONTS['sm'], fill=self.COLOURS['black'])
+
+        # If standing subdivision ('EC', 'ALE', etc.) provided, determine the correct location based on length and add those as well.
+        # If nothing provided, will just display the league name.
+        if standing_details.get('subdivision_abrv'):
+            sub_len = len(standing_details['subdivision_abrv'])
+            sub_col = 32 - 5 * sub_len
+            tmp_draw.text((sub_col, 0), standing_details['subdivision_abrv'], font=self.FONTS['sm'], fill=self.COLOURS['black'])
+
+        # If enabled in config.yaml, add a highlight colour to the sidebar. Helps differentiate between different leagues.
+        if self.settings.get('colour_sidebar'):
+            tmp_draw.line([(0, 0), (31, 0)], fill=self.COLOURS['sidebar_highlight'])
         
         # Then rotate and paste onto the side image.
         tmp_img = tmp_img.rotate(90, expand=True)
         self.images['side'].paste(tmp_img, (0,0))
 
         # Build the individual standing row images and overall standing image.
-        self.build_standing_row_images(standings, playoff_cutoff_hard, playoff_cutoff_soft)
+        self.build_standing_row_images(standing_details)
 
 
-    def build_standing_row_images(self, standings, playoff_cutoff_hard=0, playoff_cutoff_soft=0):
+    # def build_standing_row_images(self, standings, rank_method, playoff_cutoff_hard=0, playoff_cutoff_soft=0, relegation_cutoff=0):
+    def build_standing_row_images(self, standing_details):
         """ Builds images for each standing row (each team + details), as well as one for all the standings.
 
         Args:
-            standings (list): List of standing detail dicts.
-            playoff_cutoff_hard (int, optional): How many teams above the hard cutoff for playoffs. Impacts line colours. Defaults to 0.
-            playoff_cutoff_soft (int, optional): How many teams above the soft cutoff for playoffs (think NBA play-in). Impacts line colours. Defaults to 0.
+            standing_details (dict): Dict containing all details needed to build the standings image. Expected to contain at least a 'team_standings' key with a list of dicts with standings, and a 'rank_method' key with the method used to rank teams (e.g. 'Points', 'Win Percentage', etc.).
+                                     May also contain keys for 'playoff_cutoff_hard', 'playoff_cutoff_soft', and 'relegation_cutoff' to determine where to place coloured lines in the standings.
         """
 
         # Reset standing rows back to an empty list and note the number of teams to display.
         self.images['standings_rows'] = []
-        num_teams = len(standings)
+        num_teams = len(standing_details['team_standings'])
 
         # For each team in the standings, build an image with just that row, append to a list, and add to the overall standings image.
-        for row, team in enumerate(standings):
+        for row, team in enumerate(standing_details['team_standings']):
             # Create temp Image and ImageDraw objects for the row.
             tmp_img = Image.new('RGB', (self.images['standings'].size[0], 8))
             tmp_draw = ImageDraw.Draw(tmp_img)
 
-            # Determine the horizontal line colour based on the provided playoff cutoff(s).
-            if row == playoff_cutoff_hard-1:
+            # Determine the horizontal line colour based on the provided playoff/relegation cutoff(s).
+            if row == standing_details.get('playoff_cutoff_hard', 0) - 1:
                 line_colour = self.COLOURS['red']
-            elif row == playoff_cutoff_soft-1:
+            elif row == standing_details.get('playoff_cutoff_soft', 0) - 1:
                 line_colour = self.COLOURS['green']
+            elif row == standing_details.get('relegation_cutoff', 0) - 1:
+                line_colour = self.COLOURS['red']
             else:
                 line_colour = self.COLOURS['grey_dark']
             
@@ -136,32 +146,33 @@ class StandingsScene(Scene):
             # Add a red star if the team has clinched a playoff spot.
             if team['has_clinched']:
                 tmp_draw.text((14, -2), '*', font=self.FONTS['med'], fill=self.COLOURS['red'])
+
+            # TODO: Add a gold star if the team has clinched the league title. Applicable for non-playoff sports only.
             
             # Add team abrv.
             tmp_draw.text((21, -1), team['team_abrv'], font=self.FONTS['sm'], fill=team_colour)
 
-            if self.data['standings']['rank_method'] == 'Points':
-                # Determine placement of team points and add to image.
+            if standing_details['rank_method'] in ['Points', 'Wins']:
+                # Determine placement offset of team points based on length.
                 ranker_to_display = str(team['points'])
-                if team['points'] < 10:
-                    ranker_offset = 0
-                elif team['points'] < 100:
-                    ranker_offset = -5
-                else:
-                    ranker_offset = -10
-            elif self.data['standings']['rank_method'] == 'Win Percentage':
-                # Determine placement of team win percentage and add to image.
+                ranker_len = len(ranker_to_display)
+                ranker_offset = -5 * (ranker_len - 1)
+
+            elif standing_details['rank_method'] == 'Win Percentage':
+                # Determine placement offset of win percentage based on length.
                 ranker_to_display = team['percent'][2:] if team['percent'].startswith('0') else '00' # Looks odd, but will help display as 1.00.
                 
+                # If win percentage is 1.00, we'll manually add the '1.' now and '00' below.
                 if ranker_to_display == '00':
                     ranker_offset = -5
-                    tmp_draw.point((51+ranker_offset-3, 5), fill=team_colour)
-                    tmp_draw.text((51+ranker_offset-8, -1), '1', font=self.FONTS['sm'], fill=team_colour)
+                    tmp_draw.point((51+ranker_offset-2, 5), fill=team_colour)
+                    tmp_draw.text((51+ranker_offset-7, -1), '1', font=self.FONTS['sm'], fill=team_colour)
+                # Otherwise, set the offset and add a decimal point.
                 else:
                     ranker_offset = -10
-                    # Add a decimal place if needed (just a dot since the font's decimal looks odd).
                     tmp_draw.point((51+ranker_offset-2, 5), fill=team_colour)
-            elif self.data['standings']['rank_method'] == 'Wins':
+            
+            elif standing_details['rank_method'] == 'Games Back':
                 pass # TODO: implement in future.
 
             # Add ranker to image.

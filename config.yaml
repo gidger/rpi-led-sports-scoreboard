@@ -76,10 +76,11 @@ scene_settings:
         scroll_pause_duration: 1
         scroll_frame_duration: 0.075
       highlight_fav_teams: True
+      colour_sidebar: True
       display_for:
         - wildcard
-        # - division
         # - conference
+        # - division
         # - league
 
   nba:
@@ -111,6 +112,7 @@ scene_settings:
         scroll_pause_duration: 1
         scroll_frame_duration: 0.075
       highlight_fav_teams: True
+      colour_sidebar: True
       display_for:
         - conference
         # - division
@@ -144,6 +146,7 @@ scene_settings:
         scroll_pause_duration: 1
         scroll_frame_duration: 0.075
       highlight_fav_teams: True
+      colour_sidebar: True
       display_for:
         - league
   

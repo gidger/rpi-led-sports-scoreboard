@@ -20,6 +20,11 @@ class NHLStandingsScene(StandingsScene):
         super().__init__()
         self.LEAGUE = 'NHL'
 
+        # Add additional colour needed.
+        self.COLOURS.update({
+            'sidebar_highlight': (77, 84, 98) # NHL grey.
+        })
+
 
     def display_scene(self):
         """ Displays the scene on the matrix.
@@ -44,29 +49,13 @@ class NHLStandingsScene(StandingsScene):
 
         # For each standing type that should be displayed per config.yaml, build images and display.
         for type in self.settings['display_for']:
-            # Divisions.
-            if type == 'division':
-                for div in self.data['standings']['division']['divisions'].items(): # Get details needed for division standings.
-                    div_details = div[1] # Needed to get to underlying team standings.
-                    self.build_standings_image('division', div_details['abrv'], div_details['teams'], playoff_cutoff_soft=self.data['standings']['division']['playoff_cutoff_soft'])
+            # Check if standings data exists for the type before trying to build images.
+            standing_details = self.data['standings'].get(type)
+            if standing_details:
+                # Loop over each division/conference/whatever.
+                for sub_standing_details in standing_details.values():
+                    self.build_standings_image(sub_standing_details)
                     self.display_standing_images()
-            # Wildcard by conference.
-            elif type == 'wildcard':
-                for conf in self.data['standings']['wildcard']['conferences'].items():
-                    conf_details = conf[1]
-                    self.build_standings_image('wildcard', conf_details['abrv'], conf_details['teams'], playoff_cutoff_hard=self.data['standings']['wildcard']['playoff_cutoff_hard'], playoff_cutoff_soft=self.data['standings']['wildcard']['playoff_cutoff_soft'])
-                    self.display_standing_images()
-            # Conferences.
-            elif type == 'conference':
-                for conf in self.data['standings']['conference']['conferences'].items():
-                    conf_details = conf[1]
-                    self.build_standings_image('conference', conf_details['abrv'], conf_details['teams'])
-                    self.display_standing_images()
-            # Overall. Don't need to loop for this one as well... it's the whole league with no subdivisions.
-            elif type == 'league':
-                league_details = self.data['standings']['league']['leagues'][self.LEAGUE]
-                self.build_standings_image('league', league_details['abrv'], league_details['teams'])
-                self.display_standing_images()
             
 
     def display_standing_images(self):

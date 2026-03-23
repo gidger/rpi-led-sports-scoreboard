@@ -158,74 +158,43 @@ def get_standings():
     # Set up structure of the returned dict.
     # Teams lists will be populated w/ the API results.
     standings = {
-        'rank_method': 'Win Percentage',
-        'division': {
-            'divisions': {
-                'Atlantic': {
-                    'abrv': 'Atl',
-                    'teams': []
-                },
-                'Central': {
-                    'abrv': 'Cen',
-                    'teams': []
-                },
-                'Southeast': {
-                    'abrv': 'SE',
-                    'teams': []
-                },
-                'Northwest': {
-                    'abrv': 'NW',
-                    'teams': []
-                },
-                'Pacific': {
-                    'abrv': 'Pac',
-                    'teams': []
-                },
-                'Southwest': {
-                    'abrv': 'SW',
-                    'teams': []
-                }
-            }
-        },
-
+        'retrieved_on': dt.now().astimezone(),
         'conference': {
-            'playoff_cutoff_hard': 10,
-            'playoff_cutoff_soft': 6,
-            'conferences': {
-                'East': {
-                    'abrv': 'Est',
-                    'teams': []
-                },
-                'West': {
-                    'abrv': 'Wst',
-                    'teams': []
-                },
-            }
+            conf: {
+                'subdivision_abrv': conf_abrv,
+                'rank_method': 'Win Percentage',
+                'playoff_cutoff_hard': 10,
+                'playoff_cutoff_soft': 6,
+                'team_standings': []
+            } for conf, conf_abrv in [('East', 'EC'), ('West', 'WC')]
+        },
+        'division': {
+            div: {
+                'subdivision_abrv': div_abrv,
+                'rank_method': 'Win Percentage',
+                'team_standings': []
+            } for div, div_abrv in [('Atlantic', 'Atl'), ('Central', 'Cen'), ('Southeast', 'SE'), ('Northwest', 'NW'), ('Pacific', 'Pac'), ('Southwest', 'SW')]
         }
     }
 
     # Populate the team lists w/ dicts containing details of each team.
     # API returns teams in overall standing order, so generally won't have to sort.
     for team in standings_json:
-        # Divisions.
-        standings['division']['divisions'][team['Division']]['teams'].append(
-            {
-                'team_abrv': team['teamTricode'],
-                'rank': team['DivisionRank'],
-                'percent': f'{team["WinPCT"]:.3f}', # Make percent a string formatted to 3 decimal places. E.g., 0.625.
-                'has_clinched': True if team['ClinchedPostSeason'] == 1 else False
-            }
-        )
+        # Conferences.
+        standings['conference'][team['Conference']]['team_standings'].append({
+            'team_abrv': team['teamTricode'],
+            'rank': team['PlayoffRank'],
+            'percent': f'{team["WinPCT"]:.3f}', # Make percent a string formatted to 3 decimal places. E.g., 0.625.
+            'has_clinched': True if team['ClinchedPostSeason'] == 1 else False
+        })
 
-        # Conference.
-        standings['conference']['conferences'][team['Conference']]['teams'].append(
-            {
-                'team_abrv': team['teamTricode'],
-                'rank': team['PlayoffRank'],
-                'percent': f'{team["WinPCT"]:.3f}', # Make percent a string formatted to 3 decimal places. E.g., 0.625.
-                'has_clinched': True if team['ClinchedPostSeason'] == 1 else False
-            }
-        )
+        # Divisions.
+        standings['division'][team['Division']]['team_standings'].append({
+            'team_abrv': team['teamTricode'],
+            'rank': team['DivisionRank'],
+            'percent': f'{team["WinPCT"]:.3f}',
+            'has_clinched': True if team['ClinchedPostSeason'] == 1 else False
+        })
 
     return standings
 

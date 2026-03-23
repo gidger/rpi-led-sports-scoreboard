@@ -20,6 +20,11 @@ class NBAStandingsScene(StandingsScene):
         super().__init__()
         self.LEAGUE = 'NBA'
 
+        # Add additional colour needed.
+        self.COLOURS.update({
+            'sidebar_highlight': (212, 54, 47) # NBA red.
+        })
+
 
     def display_scene(self):
         """ Displays the scene on the matrix.
@@ -44,17 +49,12 @@ class NBAStandingsScene(StandingsScene):
 
         # For each standing type that should be displayed per config.yaml, build images and display.
         for type in self.settings['display_for']:
-            # Divisions.
-            if type == 'division':
-                for div in self.data['standings']['division']['divisions'].items(): # Get details needed for division standings.
-                    div_details = div[1] # Needed to get to underlying team standings.
-                    self.build_standings_image('division', div_details['abrv'], div_details['teams'])
-                    self.display_standing_images()
-            # Conferences.
-            elif type == 'conference':
-                for conf in self.data['standings']['conference']['conferences'].items():
-                    conf_details = conf[1]
-                    self.build_standings_image('conference', conf_details['abrv'], conf_details['teams'], playoff_cutoff_soft=self.data['standings']['conference']['playoff_cutoff_soft'], playoff_cutoff_hard=self.data['standings']['conference']['playoff_cutoff_hard'])
+            # Check if standings data exists for the type before trying to build images.
+            standing_details = self.data['standings'].get(type)
+            if standing_details:
+                # Loop over each division/conference/whatever.
+                for sub_standing_details in standing_details.values():
+                    self.build_standings_image(sub_standing_details)
                     self.display_standing_images()
             
 

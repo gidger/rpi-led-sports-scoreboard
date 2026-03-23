@@ -50,6 +50,7 @@ class FavTeamNextGameScene(Scene):
             # If the game has started, display 'IPR'.
             if game['has_started']:
                 self.draw['full'].text((38, 11), 'IPR', font=self.FONTS['med'], fill=self.COLOURS['white'])
+            
             # Otherwise, add start time of today's game.
             else:
                 time_str = game['start_datetime_local'].time().strftime('%I:%M')
@@ -73,6 +74,7 @@ class FavTeamNextGameScene(Scene):
                     # Minutes/seconds.
                     self.draw['full'].text((46, 11), time_str[3], font=self.FONTS['med'], fill=self.COLOURS['white'])
                     self.draw['full'].text((52, 11), time_str[4], font=self.FONTS['med'], fill=self.COLOURS['white'])
+        
         # If the game is not today add the game date to the image.
         else:
             # Note the month (3 char) and day number.
@@ -85,14 +87,33 @@ class FavTeamNextGameScene(Scene):
             day_col = 53 if len(day) == 1 else 51
             self.draw['full'].text((day_col, 12), day, font=self.FONTS['sm'], fill=self.COLOURS['white'])
 
-        # Add 'VS'/'@' and the opposing team name to the image.
-        if game['home_or_away'] == 'home':
-            self.draw['full'].text((34, 23), 'V', font=self.FONTS['sm'], fill=self.COLOURS['white'])
-            self.draw['full'].text((38, 23), 'S', font=self.FONTS['sm'], fill=self.COLOURS['white'])
-            self.draw['full'].text((44, 21), game['opponent_abrv'], font=self.FONTS['med_bold'], fill=self.COLOURS['white'])
+        # Add 'VS'/'@' and the opposing team name to the image based on the length of the opposing team abrv.
+        # Note that spacing is adjusted (& potentially some characters removed) based on the length of the opponent team abrv to ensure it is visually balanced, hence no general rule.
+        opp_length = min(len(game['opponent_abrv']), 4) # Limit to 4 chars to avoid running out of space on the image. Will be truncated in the image if longer than 4 chars.
+        if opp_length == 2:
+            if game['home_or_away'] == 'home':
+                self.draw['full'].text((37, 23), 'V', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['full'].text((41, 23), 'S', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['full'].text((47, 21), game['opponent_abrv'], font=self.FONTS['med_bold'], fill=self.COLOURS['white'])
+            else:
+                self.draw['full'].text((38, 21), '@', font=self.FONTS['med'], fill=self.COLOURS['white'])
+                self.draw['full'].text((46, 21), game['opponent_abrv'], font=self.FONTS['med_bold'], fill=self.COLOURS['white'])
+        elif opp_length == 3:
+            if game['home_or_away'] == 'home':
+                self.draw['full'].text((34, 23), 'V', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['full'].text((38, 23), 'S', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['full'].text((44, 21), game['opponent_abrv'], font=self.FONTS['med_bold'], fill=self.COLOURS['white'])
+            else:
+                self.draw['full'].text((35, 21), '@', font=self.FONTS['med'], fill=self.COLOURS['white'])
+                self.draw['full'].text((43, 21), game['opponent_abrv'], font=self.FONTS['med_bold'], fill=self.COLOURS['white'])
         else:
-            self.draw['full'].text((35, 21), '@', font=self.FONTS['med'], fill=self.COLOURS['white'])
-            self.draw['full'].text((43, 21), game['opponent_abrv'], font=self.FONTS['med_bold'], fill=self.COLOURS['white'])
+            if game['home_or_away'] == 'home':
+                self.draw['full'].text((33, 23), 'V', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                # self.draw['full'].text((38, 23), 'S', font=self.FONTS['sm'], fill=self.COLOURS['white'])
+                self.draw['full'].text((39, 21), game['opponent_abrv'], font=self.FONTS['med_bold'], fill=self.COLOURS['white'])
+            else:
+                self.draw['full'].text((33, 21), '@', font=self.FONTS['med'], fill=self.COLOURS['white'])
+                self.draw['full'].text((39, 21), game['opponent_abrv'], font=self.FONTS['med_bold'], fill=self.COLOURS['white'])
 
 
     def add_team_logo_to_image(self, team):

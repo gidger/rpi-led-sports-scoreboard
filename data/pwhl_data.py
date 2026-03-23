@@ -115,31 +115,26 @@ def get_standings():
     standings_json = standings_response.json()['SiteKit']['Statviewtype'][1:] # 0th element is metadata.
 
     # Set up structure of the returned dict.
-    # Teams lists will be populated w/ the API results.
     standings = {
-        'rank_method': 'Points',
+        'retrieved_on': dt.now().astimezone(),
         'league': {
-            'playoff_cutoff_hard': 4,
-            'leagues': {
-                'PWHL': {
-                    'abrv': '', # Don't want to display anything besides PWHL. #TODO: Clean up logic in parent standings scene to make abrv optional.
-                    'teams': []
-                }
+            'PWHL': { # Exists to match structure needed for other standing types.
+                'rank_method': 'Points',
+                'playoff_cutoff_hard': 4,
+                'team_standings': [] # Will be populated w/ the API results.
             }
         }
     }
 
     # Populate the team lists w/ dicts containing details of each team.
     for team in standings_json:
-        # Overall.
-        standings['league']['leagues']['PWHL']['teams'].append(
-            {
-                'team_abrv': team['team_code'],
-                'rank': int(team['overall_rank']),
-                'points': int(team['points']),
-                'has_clinched': True if team['clinched_playoff_spot'] == '1' else False
-            }
-        )
+        # Overall league.
+        standings['league']['PWHL']['team_standings'].append({
+            'team_abrv': team['team_code'],
+            'rank': int(team['overall_rank']),
+            'points': int(team['points']),
+            'has_clinched': True if team['clinched_playoff_spot'] == '1' else False
+        })
 
     return standings
 
