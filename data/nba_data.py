@@ -107,22 +107,23 @@ def get_next_game(team):
     # Determine the next game for the team specified and return game details.
     for day_game in upcoming_days_games:
         for game in day_game['games']:
-            if game['homeTeam']['teamTricode'] == team or game['awayTeam']['teamTricode'] == team:
-                # Put together a dictionary with needed details.
-                next_game = {
-                    'home_or_away': 'away' if game['homeTeam']['teamTricode'] != team else 'home',
-                    'opponent_abrv': game['homeTeam']['teamTricode'] if game['homeTeam']['teamTricode'] != team else game['awayTeam']['teamTricode'],
-                    'start_datetime_utc': dt.strptime(game['gameDateTimeUTC'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc),
-                    'start_datetime_local': dt.strptime(game['gameDateTimeUTC'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc).astimezone(tz=None),
-                    'is_today': True if dt.strptime(game['gameDateTimeUTC'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc).astimezone(tz=None).date() == cur_date or dt.strptime(game['gameDateTimeUTC'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc).astimezone(tz=None) < cur_datetime else False, # TODO: clean this up. Needed in case game is still going when date rolls over.
-                    'has_started': True if cur_datetime >= dt.strptime(game['gameDateTimeUTC'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc).astimezone(tz=None) else False
-                }
+            if game['gameLabel'] != 'Preseason': # This should leave regular season and playoff games.
+                if game['homeTeam']['teamTricode'] == team or game['awayTeam']['teamTricode'] == team:
+                    # Put together a dictionary with needed details.
+                    next_game = {
+                        'home_or_away': 'away' if game['homeTeam']['teamTricode'] != team else 'home',
+                        'opponent_abrv': game['homeTeam']['teamTricode'] if game['homeTeam']['teamTricode'] != team else game['awayTeam']['teamTricode'],
+                        'start_datetime_utc': dt.strptime(game['gameDateTimeUTC'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc),
+                        'start_datetime_local': dt.strptime(game['gameDateTimeUTC'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc).astimezone(tz=None),
+                        'is_today': True if dt.strptime(game['gameDateTimeUTC'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc).astimezone(tz=None).date() == cur_date or dt.strptime(game['gameDateTimeUTC'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc).astimezone(tz=None) < cur_datetime else False, # TODO: clean this up. Needed in case game is still going when date rolls over.
+                        'has_started': True if cur_datetime >= dt.strptime(game['gameDateTimeUTC'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc).astimezone(tz=None) else False
+                    }
 
-                # Skip to next game if this one has started more than 3 hours ago (longer than an avg game). Schedule API doesn't update in real-time w/ game status.
-                if next_game['has_started'] and (cur_datetime - next_game['start_datetime_local']).total_seconds() > 10800:
-                    continue
+                    # Skip to next game if this one has started more than 3 hours ago (longer than an avg game). Schedule API doesn't update in real-time w/ game status.
+                    if next_game['has_started'] and (cur_datetime - next_game['start_datetime_local']).total_seconds() > 10800:
+                        continue
 
-                return(next_game)
+                    return(next_game)
     
     # If no next game found, return None.
     return None
