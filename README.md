@@ -5,11 +5,11 @@ Display live hockey, basketball, and baseball game scores, future start times, s
 Hardware requirements, installation instructions (with and without Docker), and configuration breakdown are below.
 
 **Leagues Implemented:**
-- NHL 🏒
-- PWHL 🏒
-- NBA 🏀
-- WNBA 🏀
-- MLB ⚾️
+- 🏒 NHL
+- 🏒 PWHL
+- 🏀 NBA
+- 🏀 WNBA
+- ⚾️ MLB
 
 ### [Watch Demo on YouTube](https://www.youtube.com/watch?v=nLjgcG6VP90)
 [![Scoreboard Demo](https://img.youtube.com/vi/nLjgcG6VP90/maxresdefault.jpg)](https://www.youtube.com/watch?v=nLjgcG6VP90)
