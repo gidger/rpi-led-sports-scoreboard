@@ -20,7 +20,7 @@ def get_games(date):
     games = []
 
     # Call the PWHL game API for the date specified and store the JSON results. First determine the current season.
-    cur_season_id = get_season_id()
+    cur_season_id = get_season_id(include_playoffs=True)
     url = f'https://lscluster.hockeytech.com/feed/index.php?client_code=pwhl&key={key}&feed=modulekit&view=scorebar&numberofdaysback=1&numberofdaysahead=1'
     games_response = session.get(url=url)
     games_json = games_response.json()['SiteKit']['Scorebar']
@@ -72,7 +72,7 @@ def get_next_game(team):
     """
 
     # Call the PWHL schedule API and store the JSON results. First determine the current season.
-    cur_season_id = get_season_id()
+    cur_season_id = get_season_id(include_playoffs=True)
     url = f'https://lscluster.hockeytech.com/feed/?client_code=pwhl&key={key}&feed=modulekit&view=schedule&season_id={cur_season_id}'
     schedule_response = session.get(url=url)
     schedule_json = schedule_response.json()['SiteKit']['Schedule']
@@ -109,7 +109,7 @@ def get_standings():
     """
 
     # Call the PWHL standings API and store the JSON results. First determine the current season.
-    cur_season_id = get_season_id()
+    cur_season_id = get_season_id(include_playoffs=False)
     url = f'https://lscluster.hockeytech.com/feed/index.php?client_code=pwhl&key={key}&feed=modulekit&view=statviewtype&stat=conference&type=standings&season_id={cur_season_id}'
     standings_response = session.get(url=url)
     standings_json = standings_response.json()['SiteKit']['Statviewtype'][1:] # 0th element is metadata.
@@ -139,8 +139,11 @@ def get_standings():
     return standings
 
 
-def get_season_id():
+def get_season_id(include_playoffs):
     """ Determines the PWHL season ID.
+
+    Args:
+        include_playoffs (bool): Whether to include playoff seasons.
 
     Returns:
         int: current season ID.
@@ -155,12 +158,18 @@ def get_season_id():
     seasons_response = session.get(url=url)
     seasons_json = seasons_response.json()['SiteKit']['Seasons']
 
-    # The API returns the current season, but as we don't want preseason games, we'll need to parse further.
-    for season in seasons_json:
-        # Determine the current season. If preseason, return the next season ID.
-        if season['start_date'] <= cur_date.strftime('%Y-%m-%d') <= season['end_date']:
-            # TODO: Validate pre and post season behavior.
-            if 'Preseason' not in season['season_name']:
-                return int(season['season_id'])
-            else:
-                return int(season['season_id']) + 1
+    # Note the current season ID adn type as returned by the API. Will be used to help determine if we need to pull the previous/next season's ID instead if we're in post/preseason.
+    cur_season_id = seasons_response.json()['SiteKit']['Parameters']['season_id']
+    cur_season_type = [x['season_name'] for x in seasons_json if x['season_id'] == cur_season_id][0] # Get the season type (preseason, regular season, playoffs) for the current season ID.
+
+    # If we're in preseason, return the next season ID.
+    if 'Preseason' in cur_season_type: # TODO: validate that this will not cause issues trying to show regular season standings during preseason.
+        return int(cur_season_id) + 1
+        
+    # If we're in playoffs and include_playoffs is False, return the previous season ID.
+    elif not include_playoffs and 'Playoffs' in cur_season_type:
+        return int(cur_season_id) - 1
+    
+    # Otherwise, return the current season ID.
+    else:
+        return int(cur_season_id)
