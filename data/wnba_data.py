@@ -217,7 +217,7 @@ def determine_team_abbreviation(team_id):
     # Mapping of WNBA teams IDs to abbreviations. Needed since schedule API does not return abbreviations.
     team_ids_to_abbreviations = {
         1611661313: 'NYL',
-        1611661317: 'PHO',
+        1611661317: 'PHX',
         1611661319: 'LVA',
         1611661320: 'LAS',
         1611661321: 'DAL',
@@ -225,7 +225,7 @@ def determine_team_abbreviation(team_id):
         1611661323: 'CON',
         1611661324: 'MIN',
         1611661325: 'IND',
-        1611661327: 'POR',
+        1611661327: 'PDX',
         1611661328: 'SEA',
         1611661329: 'CHI',
         1611661330: 'ATL',
