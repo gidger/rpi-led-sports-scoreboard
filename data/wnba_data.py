@@ -2,6 +2,32 @@ from setup.session_setup import session
 from datetime import datetime as dt
 from datetime import timezone as tz
 
+# Note API headers that will need to be used for stats and cdn endpoints.
+stats_headers = {
+    'host': 'stats.nba.com',
+    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36',
+    'accept': 'application/json, text/plain, */*',
+    'accept-language': 'en-US,en;q=0.5',
+    'accept-encoding': 'gzip, deflate, br',
+    'connection': 'keep-alive',
+    'referer': 'https://www.nba.com/',
+    'pragma': 'no-cache',
+    'cache-control': 'no-cache',
+    'sec-ch-ua': '"Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-fetch-dest': 'empty'
+}
+
+cdn_headers = {
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'accept-encoding': 'gzip, deflate, br',
+    'accept-language': 'en-US,en;q=0.9',
+    'cache-control': 'max-age=0',
+    'connection': 'keep-alive',
+    'host': 'cdn.nba.com',
+    'referer': 'https://www.nba.com/',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+}
 
 def get_games(date):
     """ Loads WNBA game data for the provided date.
@@ -18,7 +44,7 @@ def get_games(date):
 
     # First, hit the todayScoreboard endpoint to see what date it is returning.
     url = 'https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_10.json'
-    games_response = session.get(url=url)
+    games_response = session.get(url=url, headers=cdn_headers)
     games_response_date = dt.strptime(games_response.json()['scoreboard']['gameDate'], '%Y-%m-%d').date()
 
     # If the date returned by the live score endpoint matches the date requested, use these results.
@@ -29,21 +55,7 @@ def get_games(date):
     else:
         # Call the WNBA game API for the date specified and store the JSON results.
         url = 'https://stats.nba.com/stats/scoreboardv3?LeagueID=10'    
-        headers = {
-            'host': "stats.nba.com",
-            'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
-            'accept': "application/json, text/plain, */*",
-            'accept-language': "en-US,en;q=0.5",
-            'accept-encoding': "gzip, deflate, br",
-            'connection': "keep-alive",
-            'referer': "https://stats.nba.com/",
-            'pragma': "no-cache",
-            'cache-control': "no-cache",
-            'sec-ch-ua': "\"Chromium\";v=\"140\", \"Google Chrome\";v=\"140\", \"Not;A=Brand\";v=\"24\"",
-            'sec-ch-ua-mobile': "?0",
-            'sec-fetch-dest': "empty"
-        }
-        games_response = session.get(url=f"{url}&GameDate={date.strftime(format='%Y-%m-%d')}", headers=headers)
+        games_response = session.get(url=f"{url}&GameDate={date.strftime(format='%Y-%m-%d')}", headers=stats_headers)
         games_json = games_response.json()['scoreboard']['games']
 
     # For each game, build a dict recording current game details.
@@ -94,21 +106,7 @@ def get_next_game(team):
     # Call the WNBA schedule API for the team specified and store the JSON results.
     # TODO: Save these results to avoid multiple calls if multiple favorite teams are set.
     url = 'https://stats.nba.com/stats/scheduleleaguev2?LeagueID=10'   
-    headers = {
-        'host': "stats.nba.com",
-        'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
-        'accept': "application/json, text/plain, */*",
-        'accept-language': "en-US,en;q=0.5",
-        'accept-encoding': "gzip, deflate, br",
-        'connection': "keep-alive",
-        'referer': "https://stats.nba.com/",
-        'pragma': "no-cache",
-        'cache-control': "no-cache",
-        'sec-ch-ua': "\"Chromium\";v=\"140\", \"Google Chrome\";v=\"140\", \"Not;A=Brand\";v=\"24\"",
-        'sec-ch-ua-mobile': "?0",
-        'sec-fetch-dest': "empty"
-    }
-    schedule_response = session.get(url=f'{url}&Season={season}', headers=headers)
+    schedule_response = session.get(url=f'{url}&Season={season}', headers=stats_headers)
     schedule_json = schedule_response.json()['leagueSchedule']['gameDates']
 
     # Determine the future games.
@@ -152,22 +150,8 @@ def get_standings():
     season = determine_current_season()
 
     # Call the WNBA standings API and store the JSON results.
-    url = 'https://stats.nba.com/stats/leaguestandingsv3?LeagueID=10&SeasonType=Regular Season'    
-    headers = {
-        'host': "stats.nba.com",
-        'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
-        'accept': "application/json, text/plain, */*",
-        'accept-language': "en-US,en;q=0.5",
-        'accept-encoding': "gzip, deflate, br",
-        'connection': "keep-alive",
-        'referer': "https://stats.nba.com/",
-        'pragma': "no-cache",
-        'cache-control': "no-cache",
-        'sec-ch-ua': "\"Chromium\";v=\"140\", \"Google Chrome\";v=\"140\", \"Not;A=Brand\";v=\"24\"",
-        'sec-ch-ua-mobile': "?0",
-        'sec-fetch-dest': "empty"
-    }
-    standings_response = session.get(url=f'{url}&Season={season}', headers=headers)
+    url = 'https://stats.nba.com/stats/leaguestandingsv3?LeagueID=10&SeasonType=Regular Season'
+    standings_response = session.get(url=f'{url}&Season={season}', headers=stats_headers)
     standings_json_unprocessed = standings_response.json()['resultSets'][0]
 
     # Process the returned JSON into a more usable format.
