@@ -29,11 +29,12 @@ cdn_headers = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
 }
 
-def get_games(date):
-    """ Loads WNBA game data for the provided date.
+def get_games(date, league_abrv):
+    """ Loads NBA/WNBA game data for the provided date.
 
     Args:
         date (date): Date that game data should be pulled for.
+        league_abrv (str): Abbreviation of the league for which to fetch game data (e.g., 'NBA', 'WNBA').
 
     Returns:
         list: List of dicts of game data.
@@ -42,8 +43,11 @@ def get_games(date):
     # Create an empty list to hold the game dicts.
     games = []
 
+    # Determine the league ID needed for the API calls based on the league abbreviation provided.
+    league_id = determine_league_id(league_abrv)
+
     # First, hit the todayScoreboard endpoint to see what date it is returning.
-    url = 'https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_10.json'
+    url = f'https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_{league_id}.json'
     games_response = session.get(url=url, headers=cdn_headers)
     games_response_date = dt.strptime(games_response.json()['scoreboard']['gameDate'], '%Y-%m-%d').date()
 
@@ -53,15 +57,15 @@ def get_games(date):
 
     # Otherwise, hit the scoreboardv3 endpoint w/ the date param.
     else:
-        # Call the WNBA game API for the date specified and store the JSON results.
-        url = 'https://stats.nba.com/stats/scoreboardv3?LeagueID=10'    
+        # Call the NBA/WNBA game API for the date specified and store the JSON results.
+        url = f'https://stats.nba.com/stats/scoreboardv3?LeagueID={league_id}'
         games_response = session.get(url=f"{url}&GameDate={date.strftime(format='%Y-%m-%d')}", headers=stats_headers)
         games_json = games_response.json()['scoreboard']['games']
 
     # For each game, build a dict recording current game details.
     if games_json: # If games today.
         for game in games_json:
-            if 'All-Star' not in game['gameLabel'] and 'Preseason' not in game['gameLabel']: # This should leave regular season and playoff games.
+            if 'All-Star' not in game['gameLabel'] and 'Preseason' not in game['gameLabel'] and 'Rising Stars' not in game['gameLabel']: # This should leave regular season and playoff games.
                 games.append({
                     'game_id': game['gameId'],
                     'home_abrv': game['homeTeam']['teamTricode'],
@@ -89,23 +93,25 @@ def get_games(date):
     return games
 
 
-def get_next_game(team):
-    """ Loads next game details for the supplied WNBA team.
+def get_next_game(team, league_abrv):
+    """ Loads next game details for the supplied NBA/WNBA team.
     If the team is currently playing, will return details of the current game.
 
     Args:
         team (str): Three char abbreviation of the team to pull next game details for.
+        league_abrv (str): Abbreviation of the league for which to fetch game data (e.g., 'NBA', 'WNBA').
 
     Returns:
             dict: Dict of next game details.
     """
 
-    # Get the current WNBA season based on the current date.
-    season = determine_current_season()
+    # Get the current NBA/WNBA season based on the current date and league ID from abbreviation provided.
+    season = determine_current_season(league_abrv)
+    league_id = determine_league_id(league_abrv)
 
-    # Call the WNBA schedule API for the team specified and store the JSON results.
+    # Call the NBA/WNBA schedule API for the team specified and store the JSON results.
     # TODO: Save these results to avoid multiple calls if multiple favorite teams are set.
-    url = 'https://stats.nba.com/stats/scheduleleaguev2?LeagueID=10'   
+    url = f'https://stats.nba.com/stats/scheduleleaguev2?LeagueID={league_id}'   
     schedule_response = session.get(url=f'{url}&Season={season}', headers=stats_headers)
     schedule_json = schedule_response.json()['leagueSchedule']['gameDates']
 
@@ -139,18 +145,22 @@ def get_next_game(team):
     return None
 
 
-def get_standings():
-    """ Loads current WNBA standings by division, conference, and overall league.
+def get_standings(league_abrv):
+    """ Loads current NBA/WNBA standings by division, conference, and overall league.
+
+    Args:
+        league_abrv (str): Abbreviation of the league for which to fetch standings data (e.g., 'NBA', 'WNBA').
 
     Returns:
         dict: Dict containing all standings by each category.
     """
 
-    # Get the current WNBA season based on the current date.
-    season = determine_current_season()
-
-    # Call the WNBA standings API and store the JSON results.
-    url = 'https://stats.nba.com/stats/leaguestandingsv3?LeagueID=10&SeasonType=Regular Season'
+    # Get the current NBA/WNBA season based on the current date and league ID from abbreviation provided.
+    season = determine_current_season(league_abrv)
+    league_id = determine_league_id(league_abrv)
+    
+    # Call the NBA/WNBA standings API and store the JSON results.
+    url = f'https://stats.nba.com/stats/leaguestandingsv3?LeagueID={league_id}&SeasonType=Regular Season'
     standings_response = session.get(url=f'{url}&Season={season}', headers=stats_headers)
     standings_json_unprocessed = standings_response.json()['resultSets'][0]
 
@@ -162,60 +172,163 @@ def get_standings():
             team_values[header] = value
         
         # Add the team abbreviation to the dict based on the dict defined above.
-        team_values['teamTricode'] = determine_team_abbreviation(team_values['TeamID'])
+        team_values['teamTricode'] = determine_team_abbreviation(team_values['TeamID'], league_abrv)
         standings_json.append(team_values)
 
-    # Set up structure of the returned dict.
-    # Teams lists will be populated w/ the API results.
-    standings = {
-        'retrieved_on': dt.now().astimezone(),
-        'league': {
-            'WNBA': { # Match structure needed for other standing types.
-                'rank_method': 'Win Percentage',
-                'playoff_cutoff_hard': 8,
-                'team_standings': [] # Will be populated w/ the API results.
+    # How the standings are structured depends on the league, so determine the structure based on the league and populate accordingly.
+    if league_abrv == 'NBA':
+        # Set up structure of the returned dict.
+        # Teams lists will be populated w/ the API results.
+        standings = {
+            'retrieved_on': dt.now().astimezone(),
+            'conference': {
+                conf: {
+                    'subdivision_abrv': conf_abrv,
+                    'rank_method': 'Win Percentage',
+                    'playoff_cutoff_hard': 10,
+                    'playoff_cutoff_soft': 6,
+                    'team_standings': []
+                } for conf, conf_abrv in [('East', 'EC'), ('West', 'WC')]
+            },
+            'division': {
+                div: {
+                    'subdivision_abrv': div_abrv,
+                    'rank_method': 'Win Percentage',
+                    'team_standings': []
+                } for div, div_abrv in [('Atlantic', 'Atl'), ('Central', 'Cen'), ('Southeast', 'SE'), ('Northwest', 'NW'), ('Pacific', 'Pac'), ('Southwest', 'SW')]
             }
         }
-    }
 
-    # Populate the team lists w/ dicts containing details of each team.
-    # API returns teams in overall standing order, so generally won't have to sort.
-    for team in standings_json:
-        # Overall.
-        standings['league']['WNBA']['team_standings'].append({
+        # Populate the team lists w/ dicts containing details of each team.
+        # API returns teams in overall standing order, so generally won't have to sort.
+        for team in standings_json:
+            # Conferences.
+            standings['conference'][team['Conference']]['team_standings'].append({
                 'team_abrv': team['teamTricode'],
                 'rank': team['PlayoffRank'],
                 'percent': f'{team["WinPCT"]:.3f}', # Make percent a string formatted to 3 decimal places. E.g., 0.625.
-                'has_clinched': True if team['ClinchIndicator'] == ' - x' else False # ClinchedPostSeason isn't populated in WNBA API.
-        })
+                'has_clinched': True if team['ClinchedPostSeason'] == 1 else False
+            })
+
+            # Divisions.
+            standings['division'][team['Division']]['team_standings'].append({
+                'team_abrv': team['teamTricode'],
+                'rank': team['DivisionRank'],
+                'percent': f'{team["WinPCT"]:.3f}',
+                'has_clinched': True if team['ClinchedPostSeason'] == 1 else False
+            })
+    
+    elif league_abrv == 'WNBA':
+        # Set up structure of the returned dict.
+        # Teams lists will be populated w/ the API results.
+        standings = {
+            'retrieved_on': dt.now().astimezone(),
+            'league': {
+                'WNBA': { # Match structure needed for other standing types.
+                    'rank_method': 'Win Percentage',
+                    'playoff_cutoff_hard': 8,
+                    'team_standings': [] # Will be populated w/ the API results.
+                }
+            }
+        }
+
+        # Populate the team lists w/ dicts containing details of each team.
+        # API returns teams in overall standing order, so generally won't have to sort.
+        for team in standings_json:
+            # Overall.
+            standings['league']['WNBA']['team_standings'].append({
+                    'team_abrv': team['teamTricode'],
+                    'rank': team['PlayoffRank'],
+                    'percent': f'{team["WinPCT"]:.3f}', # Make percent a string formatted to 3 decimal places. E.g., 0.625.
+                    'has_clinched': True if team['ClinchIndicator'] == ' - x' else False # ClinchedPostSeason isn't populated in WNBA API.
+            })
 
     return standings
 
 
-def determine_current_season():
-    """ Determines the current WNBA season based on the current date.
+def determine_league_id(league_abrv):
+    """ Gets league ID based on league abbreviation.
+
+    Args:
+        league_abrv (str): Abbreviation of the league. E.g., 'NBA', 'WNBA'.
 
     Returns:
-        str: Current WNBA season in 'YYYY' format.
+        str: League ID per the NBA API.
+    """
+
+    league_abrv_to_ids = {
+        'NBA': '00',
+        'WNBA': '10'
+    }
+
+    return league_abrv_to_ids.get(league_abrv, None)
+
+
+def determine_current_season(league_abrv):
+    """ Determines the current NBA/WNBA season based on the current date.
+
+    Args:
+        league_abrv (str): Abbreviation of the league. E.g., 'NBA', 'WNBA'.
+
+    Returns:
+        str: Current NBA season in 'YYYY-YY' (NBA) or 'YYYY' (WNBA) format.
     """
 
     cur_date = dt.today().astimezone().date()
-    season = str(cur_date.year)
-    return season
+
+    if league_abrv == 'NBA':
+        return f'{cur_date.year}-{str(cur_date.year + 1)[2:4]}' if cur_date.month >= 7 else f'{cur_date.year -1}-{str(cur_date.year)[2:4]}'
+    elif league_abrv == 'WNBA':
+        return str(cur_date.year) # WNBA season is contained within a single calendar year, so just return the year.
 
 
-def determine_team_abbreviation(team_id):
-    """ Gets team abbreviation (tricode) based on team ID.
+def determine_team_abbreviation(team_id, league_abrv):
+    """ Gets NBA/WNBA team abbreviation (tricode) based on team ID.
 
     Args:
-        team_id (int): ID of the WNBA team per the WNBA API.
+        team_id (int): ID of the NBA/WNBA team per the NBA/WNBA API.
+        league_abrv (str): Abbreviation of the league. E.g., 'NBA', 'WNBA'.
 
     Returns:
         str: Team tricode.
     """
 
+    # Mapping of NBA teams IDs to abbreviations. Needed since schedule API does not return abbreviations.
+    nba_team_ids_to_abbreviations = {
+        1610612737: 'ATL',
+        1610612738: 'BOS',
+        1610612739: 'CLE',
+        1610612740: 'NOP',
+        1610612741: 'CHI',
+        1610612742: 'DAL',
+        1610612743: 'DEN',
+        1610612744: 'GSW',
+        1610612745: 'HOU',
+        1610612746: 'LAC',
+        1610612747: 'LAL',
+        1610612748: 'MIA',
+        1610612749: 'MIL',
+        1610612750: 'MIN',
+        1610612751: 'BKN',
+        1610612752: 'NYK',
+        1610612753: 'ORL',
+        1610612754: 'IND',
+        1610612755: 'PHI',
+        1610612756: 'PHX',
+        1610612757: 'POR',
+        1610612758: 'SAC',
+        1610612759: 'SAS',
+        1610612760: 'OKC',
+        1610612761: 'TOR',
+        1610612762: 'UTA',
+        1610612763: 'MEM',
+        1610612764: 'WAS',
+        1610612765: 'DET',
+        1610612766: 'CHA'
+    }
+
     # Mapping of WNBA teams IDs to abbreviations. Needed since schedule API does not return abbreviations.
-    team_ids_to_abbreviations = {
+    wnba_team_ids_to_abbreviations = {
         1611661313: 'NYL',
         1611661317: 'PHX',
         1611661319: 'LVA',
@@ -233,4 +346,6 @@ def determine_team_abbreviation(team_id):
         1611661332: 'TOR'
     }
 
-    return team_ids_to_abbreviations.get(team_id, None)
+    # Determine which mapping to use and return the appropriate abbreviation based on the team ID.
+    team_mapping = nba_team_ids_to_abbreviations if league_abrv == 'NBA' else wnba_team_ids_to_abbreviations
+    return team_mapping.get(team_id, None)

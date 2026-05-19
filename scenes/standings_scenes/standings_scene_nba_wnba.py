@@ -1,28 +1,31 @@
 from .standings_scene import StandingsScene
 from setup.matrix_setup import matrix
-import data.wnba_data
+import data.nba_wnba_data
 from utils import data_utils
 
 from datetime import datetime as dt
 from time import sleep
 
 
-class WNBAStandingsScene(StandingsScene):
-    """ Standings scene for the WNBA. Contains functionality to pull standings data from WNBA API, process as needed, and build+display images based on the result.
+class NBAWNBAStandingsScene(StandingsScene):
+    """ Standings scene for the NBA/WNBA. Contains functionality to pull standings data from NBA/WNBA API, process as needed, and build+display images based on the result.
     This class extends the general Scene and StandingsScene classes. An object of this class type is created when the scoreboard is started.
     """
 
-    def __init__(self):
-        """ Defines the league as WNBA. Used to identify the correct files when adding logos to images.
+    def __init__(self, league_abrv):
+        """ Defines the league as NBA/WNBA. Used to identify the correct files when adding logos to images.
         First runs init from the generic GameScene class.
+
+        Args:
+            league_abrv (str): Abbreviation of the league for which to fetch game data (e.g., 'NBA', 'WNBA').
         """
         
         super().__init__()
-        self.LEAGUE = 'WNBA'
+        self.LEAGUE = league_abrv
 
         # Add additional colour needed.
         self.COLOURS.update({
-            'sidebar_highlight': (250, 70, 22) # WNBA orange.
+            'sidebar_highlight': (212, 54, 47) # NBA red.
         })
 
 
@@ -36,7 +39,7 @@ class WNBAStandingsScene(StandingsScene):
 
         # Get current standings data.
         self.data = {
-            'standings': data.wnba_data.get_standings()
+            'standings': data.nba_wnba_data.get_standings(self.LEAGUE)
         }
 
         # Display splash if enabled.
@@ -52,7 +55,7 @@ class WNBAStandingsScene(StandingsScene):
             # Check if standings data exists for the type before trying to build images.
             standing_details = self.data['standings'].get(type)
             if standing_details:
-                # Only league is relevant, but keeping standard logic.
+                # Loop over each division/conference/whatever.
                 for sub_standing_details in standing_details.values():
                     self.build_standings_image(sub_standing_details)
                     self.display_standing_images()

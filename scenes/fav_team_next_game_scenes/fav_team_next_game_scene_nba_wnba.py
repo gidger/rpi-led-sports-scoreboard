@@ -1,24 +1,27 @@
 from .fav_team_next_game_scene import FavTeamNextGameScene
 from setup.matrix_setup import matrix
-import data.nba_data
+import data.nba_wnba_data
 from utils import data_utils
 
 from datetime import datetime as dt
 from time import sleep
 
 
-class NBAFavTeamNextGameScene(FavTeamNextGameScene):
+class NBAWNBAFavTeamNextGameScene(FavTeamNextGameScene):
     """ Favourite team next game scene for the NBA. Contains functionality to pull schedule data from NBA API, parse, and build+display images based on the result.
     This class extends the general Scene and FavTeamNextGameScene classes. An object of this class type is created when the scoreboard is started.
     """
 
-    def __init__(self):
-        """ Defines the league as NBA. Used to identify the correct files when adding logos to images.
+    def __init__(self, league_abrv):
+        """ Defines the league as NBA/WNBA. Used to identify the correct files when adding logos to images.
         First runs init from the generic GameScene class.
+
+        Args:
+            league_abrv (str): Abbreviation of the league for which to fetch game data (e.g., 'NBA', 'WNBA').
         """
         
         super().__init__()
-        self.LEAGUE = 'NBA'
+        self.LEAGUE = league_abrv
 
 
     def display_scene(self):
@@ -33,7 +36,7 @@ class NBAFavTeamNextGameScene(FavTeamNextGameScene):
         # Determine next game for each fav team per config.yaml. Build images and display.
         if self.favourite_teams:
             for team in self.favourite_teams:
-                next_game_details = data.nba_data.get_next_game(team)
+                next_game_details = data.nba_wnba_data.get_next_game(team, self.LEAGUE)
                 
                 if next_game_details:
                     # If a game is in progress, and display_if_in_progress is False, exit without displaying anything.

@@ -6,13 +6,9 @@ from scenes.game_scenes.games_scene_pwhl import PWHLGamesScene
 from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_pwhl import PWHLFavTeamNextGameScene
 from scenes.standings_scenes.standings_scene_pwhl import PWHLStandingsScene
 
-from scenes.game_scenes.games_scene_nba import NBAGamesScene
-from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_nba import NBAFavTeamNextGameScene
-from scenes.standings_scenes.standings_scene_nba import NBAStandingsScene
-
-from scenes.game_scenes.games_scene_wnba import WNBAGamesScene
-from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_wnba import WNBAFavTeamNextGameScene
-from scenes.standings_scenes.standings_scene_wnba import WNBAStandingsScene
+from scenes.game_scenes.games_scene_nba_wnba import NBAWNBAGamesScene
+from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_nba_wnba import NBAWNBAFavTeamNextGameScene
+from scenes.standings_scenes.standings_scene_nba_wnba import NBAWNBAStandingsScene
 
 from scenes.game_scenes.games_scene_mlb import MLBGamesScene
 from scenes.fav_team_next_game_scenes.fav_team_next_game_scene_mlb import MLBFavTeamNextGameScene
@@ -33,13 +29,13 @@ def run_scoreboard():
         'pwhl_fav_team_next_game':  PWHLFavTeamNextGameScene(),
         'pwhl_standings':           PWHLStandingsScene(),
 
-        'nba_games':                NBAGamesScene(),
-        'nba_fav_team_next_game':   NBAFavTeamNextGameScene(),
-        'nba_standings':            NBAStandingsScene(),
+        'nba_games':                NBAWNBAGamesScene('NBA'),
+        'nba_fav_team_next_game':   NBAWNBAFavTeamNextGameScene('NBA'),
+        'nba_standings':            NBAWNBAStandingsScene('NBA'),
 
-        'wnba_games':               WNBAGamesScene(),
-        'wnba_fav_team_next_game':  WNBAFavTeamNextGameScene(),
-        'wnba_standings':           WNBAStandingsScene(),
+        'wnba_games':               NBAWNBAGamesScene('WNBA'),
+        'wnba_fav_team_next_game':  NBAWNBAFavTeamNextGameScene('WNBA'),
+        'wnba_standings':           NBAWNBAStandingsScene('WNBA'),
 
         'mlb_games':                MLBGamesScene(),
         'mlb_fav_team_next_game':   MLBFavTeamNextGameScene(),
