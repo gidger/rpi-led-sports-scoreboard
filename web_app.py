@@ -21,6 +21,8 @@ yaml.representer.add_representer(bool, bool_representer)
 LEAGUES = {
     "NHL": ["nhl_fav_team_next_game", "nhl_games", "nhl_standings"],
     "NBA": ["nba_fav_team_next_game", "nba_games", "nba_standings"],
+    "NCAA-MENS": ["ncaa_mens_fav_team_next_game", "ncaa_mens_games"],
+    "NCAA-WOMENS": ["ncaa_womens_fav_team_next_game","ncaa_womens_games"],
     "PWHL": ["pwhl_fav_team_next_game", "pwhl_games", "pwhl_standings"],
     "MLS": ["mls_fav_team_next_game", "mls_games", "mls_standings"],
     "EPL": ["epl_fav_team_next_game", "epl_games", "epl_standings"],
@@ -34,6 +36,8 @@ LEAGUES = {
 DISPLAY_NAMES = {
     "NHL": "NHL",
     "NBA": "NBA",
+    "NCAA-Mens": "NCAA Mens",
+    "NCAA-Womens": "NCAA Womens",
     "PWHL": "PWHL",
     "MLS": "MLS",
     "EPL": "Premier League",

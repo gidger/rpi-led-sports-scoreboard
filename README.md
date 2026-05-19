@@ -12,6 +12,8 @@ F1 pulled from [MAX-POW3R fork of Gidger](https://github.com/MAX-P0W3R/rpi-led-n
 **Leagues Implemented:**
 - NHL 🏒
 - NBA 🏀
+- NCAA Mens 🏀
+- NCAA Womens 🏀
 - PWHL 🏒
 - MLS ⚽
 - English Premier League ⚽
@@ -246,6 +248,10 @@ Functionality is divided into different "scenes" that each display information o
 | NBA Games                    | nba_games                           | Displays live NBA game scores, time remaining, etc. If the game hasn't started, start time is displayed. Can optionally display games for previous day as well.                                                  |
 | NBA Favourite Team Next Game | nba_fav_team_next_game              | Displays next game details for all specified favourite teams. If game is today, displays start time. Can optionally be suppressed if game is in progress. Will not display anything if no favourite team is set. |
 | NBA Standings                | nba_standings                       | Displays standings for division and/or conference, as configured by the user. Can optionally highlight favourite team.                                                                                           |
+| NCAA Mens Games                    | ncaa_mens_games                           | Displays live NCAA Mens game scores, time remaining, etc. If the game hasn't started, start time is displayed. Can optionally display games for previous day as well.                                                  |
+| NCAA Mens Favourite Team Next Game | ncaa_mens_fav_team_next_game              | Displays next game details for all specified favourite teams. If game is today, displays start time. Can optionally be suppressed if game is in progress. Will not display anything if no favourite team is set. |
+| NCAA Womens Games                    | ncaa_womens_games                           | Displays live NCAA Womens game scores, time remaining, etc. If the game hasn't started, start time is displayed. Can optionally display games for previous day as well.                                                  |
+| NCAA Womens Favourite Team Next Game | ncaa_womens_fav_team_next_game              | Displays next game details for all specified favourite teams. If game is today, displays start time. Can optionally be suppressed if game is in progress. Will not display anything if no favourite team is set. |
 | PWHL Games                    | pwhl_games                           | Displays live PWHL game scores, time remaining, etc. If the game hasn't started, start time is displayed. Can optionally display games for previous day as well.                                                  |
 | PWHL Favourite Team Next Game | pwhl_fav_team_next_game              | Displays next game details for all specified favourite teams. If game is today, displays start time. Can optionally be suppressed if game is in progress. Will not display anything if no favourite team is set. |
 | PWHL Standings                | pwhl_standings                       | Displays standings for wild card, division, conference, and/or overall, as configured by the user. Can optionally highlight favourite team.                                                                      |
