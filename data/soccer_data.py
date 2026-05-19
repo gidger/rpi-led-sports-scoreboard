@@ -185,8 +185,8 @@ def get_standings(self):
             standings['conference']['conferences']['East']['teams'].append(
                 {
                     'team_abrv': team['team']['abbreviation'],
-                    'rank': int(team['stats'][10]['value']),
-                    'points': int(team['stats'][3]['value']),
+                    'rank': int(next((s['value'] for s in team['stats'] if s['name'] == 'rank'), 0)),
+                    'points': int(next((s['value'] for s in team['stats'] if s['name'] == 'points'), 0)),
                     'has_clinched': False
                 }
             )
@@ -195,8 +195,8 @@ def get_standings(self):
             standings['league']['leagues'][self.LEAGUE]['teams'].append(
                 {
                     'team_abrv': team['team']['abbreviation'],
-                    'rank': int(team['stats'][10]['value']),
-                    'points': int(team['stats'][3]['value']),
+                    'rank': int(next((s['value'] for s in team['stats'] if s['name'] == 'rank'), 0)),
+                    'points': int(next((s['value'] for s in team['stats'] if s['name'] == 'points'), 0)),
                     'has_clinched': False
                 }
             )
@@ -205,8 +205,8 @@ def get_standings(self):
             standings['conference']['conferences']['West']['teams'].append(
                 {
                     'team_abrv': team['team']['abbreviation'],
-                    'rank': int(team['stats'][10]['value']),
-                    'points': int(team['stats'][3]['value']),
+                    'rank': int(next((s['value'] for s in team['stats'] if s['name'] == 'rank'), 0)),
+                    'points': int(next((s['value'] for s in team['stats'] if s['name'] == 'points'), 0)),
                     'has_clinched': False
                 }
             )
@@ -215,8 +215,8 @@ def get_standings(self):
             standings['league']['leagues'][self.LEAGUE]['teams'].append(
                 {
                     'team_abrv': team['team']['abbreviation'],
-                    'rank': int(team['stats'][10]['value']),
-                    'points': int(team['stats'][3]['value']),
+                    'rank': int(next((s['value'] for s in team['stats'] if s['name'] == 'rank'), 0)),
+                    'points': int(next((s['value'] for s in team['stats'] if s['name'] == 'points'), 0)),
                     'has_clinched': False
                 }
             )
@@ -229,8 +229,8 @@ def get_standings(self):
             standings['league']['leagues'][self.LEAGUE]['teams'].append(
                 {
                     'team_abrv': team['team']['abbreviation'],
-                    'rank': int(team['stats'][10]['value']),
-                    'points': int(team['stats'][3]['value']),
+                    'rank': int(next((s['value'] for s in team['stats'] if s['name'] == 'rank'), 0)),
+                    'points': int(next((s['value'] for s in team['stats'] if s['name'] == 'points'), 0)),
                     'has_clinched': False
                 }
             )
