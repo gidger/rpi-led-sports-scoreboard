@@ -68,28 +68,29 @@ def get_games(date):
     # For each game, build a dict recording current game details.
     if games_json: # If games today.
         for game in games_json:
-            games.append({
-                'game_id': game['gamePk'],
-                'home_abrv': game['teams']['home']['team']['abbreviation'],
-                'away_abrv': game['teams']['away']['team']['abbreviation'],
-                'home_score': game.get('linescore', {}).get('teams', {}).get('home', {}).get('runs', 0), # These won't exist until the game starts.
-                'away_score': game.get('linescore', {}).get('teams', {}).get('away', {}).get('runs', 0),
-                'start_datetime_utc': dt.strptime(game['gameDate'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc),
-                'start_datetime_local': dt.strptime(game['gameDate'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc).astimezone(tz=None), # Convert UTC to local time.
-                'start_time_tbd': game['status']['startTimeTBD'],
-                'status': game['status']['abstractGameState'],
-                'detailed_status': game['status']['detailedState'],
-                'has_started': True if game['status']['abstractGameState'] in ['Live', 'Final'] else False,
-                'inning_num': game.get('linescore', {}).get('currentInning'), # These won't exist until the game starts.
-                'inning_state': game.get('linescore', {}).get('inningState'),
-                'outs': game.get('linescore', {}).get('outs', 0),
-                'runner_on_first': True if 'first' in game.get('linescore', {}).get('offense', {}) else False,
-                'runner_on_second': True if 'second' in game.get('linescore', {}).get('offense', {}) else False,
-                'runner_on_third': True if 'third' in game.get('linescore', {}).get('offense', {}) else False,
-                'home_team_scored': False, # These will be populated later based on score changes, but default to False for now.
-                'away_team_scored': False,
-                'scoring_team': None
-            })
+            if game['gameType'] != 'A': # Ignore the all-star game..
+                games.append({
+                    'game_id': game['gamePk'],
+                    'home_abrv': game['teams']['home']['team']['abbreviation'],
+                    'away_abrv': game['teams']['away']['team']['abbreviation'],
+                    'home_score': game.get('linescore', {}).get('teams', {}).get('home', {}).get('runs', 0), # These won't exist until the game starts.
+                    'away_score': game.get('linescore', {}).get('teams', {}).get('away', {}).get('runs', 0),
+                    'start_datetime_utc': dt.strptime(game['gameDate'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc),
+                    'start_datetime_local': dt.strptime(game['gameDate'], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=tz.utc).astimezone(tz=None), # Convert UTC to local time.
+                    'start_time_tbd': game['status']['startTimeTBD'],
+                    'status': game['status']['abstractGameState'],
+                    'detailed_status': game['status']['detailedState'],
+                    'has_started': True if game['status']['abstractGameState'] in ['Live', 'Final'] else False,
+                    'inning_num': game.get('linescore', {}).get('currentInning'), # These won't exist until the game starts.
+                    'inning_state': game.get('linescore', {}).get('inningState'),
+                    'outs': game.get('linescore', {}).get('outs', 0),
+                    'runner_on_first': True if 'first' in game.get('linescore', {}).get('offense', {}) else False,
+                    'runner_on_second': True if 'second' in game.get('linescore', {}).get('offense', {}) else False,
+                    'runner_on_third': True if 'third' in game.get('linescore', {}).get('offense', {}) else False,
+                    'home_team_scored': False, # These will be populated later based on score changes, but default to False for now.
+                    'away_team_scored': False,
+                    'scoring_team': None
+                })
 
     # Sort games by start datetime and game ID to ensure consistent order. Start datetime needed since game IDs can have a weird order due to postponement, etc.
     games = sorted(games, key=lambda x: (x['start_datetime_utc'], x['game_id']))
