@@ -232,9 +232,13 @@ scene_settings:
         # - division
 
 
+# Display settings.
+display_mode: 'led_matrix' # 'led_matrix', 'browser'.
+
+
 # Brightness settings.
 brightness:
-  brightness_mode: 'auto' #'auto', 'static'.
+  brightness_mode: 'auto' # 'auto', 'static'.
   max_brightness: 100
 
 
