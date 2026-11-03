@@ -1,8 +1,20 @@
 from utils import data_utils
-from rgbmatrix import RGBMatrix, RGBMatrixOptions
-# from RGBMatrixEmulator import RGBMatrix, RGBMatrixOptions
 from datetime import datetime as dt
 import math
+
+
+# Determine display mode from config.yaml. If display_mode is missing, fall back to 'led_matrix'.
+display_mode = data_utils.read_yaml('config.yaml').get('display_mode', 'led_matrix')
+
+# Import the appropriate RGBMatrix library based on the display_mode.
+if display_mode == 'led_matrix':
+    from rgbmatrix import RGBMatrix, RGBMatrixOptions
+elif display_mode == 'browser':
+    from RGBMatrixEmulator import RGBMatrix, RGBMatrixOptions
+
+# If display_mode is not recognized, raise an error.
+else:
+    raise ValueError(f'Unsupported display_mode: "{display_mode}". Expected "led_matrix" or "browser".')
 
 
 def determine_matrix_brightness():
@@ -15,7 +27,7 @@ def determine_matrix_brightness():
     # Load brightness config settings from config.yaml.
     brightness_config = data_utils.read_yaml('config.yaml')['brightness']
 
-    # If static brightness, simply get the brightness from confir.yaml.
+    # If static brightness, simply get the brightness from config.yaml.
     if brightness_config['brightness_mode'] == 'static':
         return brightness_config['max_brightness']
     
@@ -32,7 +44,7 @@ def determine_matrix_brightness():
     
     # If unexpected brightness_mode, fallback to max brightness.
     else:
-        print("Unexpected brightness_mode encountered in config.yaml: {brightness_config['brightness_mode']}")
+        print(f'Unexpected brightness_mode encountered in config.yaml: {brightness_config["brightness_mode"]}. Falling back to 100%.')
         return 100
 
 # Make matrix options object with needed settings.
