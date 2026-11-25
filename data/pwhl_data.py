@@ -1,3 +1,5 @@
+from unicodedata import category
+
 from setup.session_setup import session
 from datetime import datetime as dt
 from datetime import timezone as tz
@@ -112,7 +114,7 @@ def get_standings():
     cur_season_id = get_season_id(include_playoffs=False)
     url = f'https://lscluster.hockeytech.com/feed/index.php?client_code=pwhl&key={key}&feed=modulekit&view=statviewtype&stat=conference&type=standings&season_id={cur_season_id}'
     standings_response = session.get(url=url)
-    standings_json = standings_response.json()['SiteKit']['Statviewtype'][1:] # 0th element is metadata.
+    standings_json = standings_response.json()['SiteKit']['Statviewtype']
 
     # Set up structure of the returned dict.
     standings = {
@@ -120,14 +122,25 @@ def get_standings():
         'league': {
             'PWHL': { # Exists to match structure needed for other standing types.
                 'rank_method': 'Points',
-                'playoff_cutoff_hard': 4,
                 'team_standings': [] # Will be populated w/ the API results.
             }
+        },
+        'conference': {
+            conf: {
+                'subdivision_abrv': conf_abrv,
+                'rank_method': 'Points',
+                'playoff_cutoff_hard': 4,
+                'team_standings': []
+            } for conf, conf_abrv in [('Eastern Conference', 'EC'), ('Western Conference', 'WC')]
         }
     }
 
     # Populate the team lists w/ dicts containing details of each team.
     for team in standings_json:
+        # There's elements noting headers for conferences, ignore those.
+        if 'repeatheader' in team:
+            continue
+
         # Overall league.
         standings['league']['PWHL']['team_standings'].append({
             'team_abrv': team['team_code'],
@@ -135,6 +148,18 @@ def get_standings():
             'points': int(team['points']),
             'has_clinched': True if team['clinched_playoff_spot'] == '1' else False
         })
+
+        # Conferences.
+        standings['conference'][team['conference_name']]['team_standings'].append({
+            'team_abrv': team['team_code'],
+            'rank': int(team['rank']),
+            'points': int(team['points']),
+            'has_clinched': True if team['clinched_playoff_spot'] == '1' else False
+        })
+
+
+    # Sort overall standings by rank. API returns all West teams first, then East.
+    standings['league']['PWHL']['team_standings'].sort(key=lambda x: x['rank'])
 
     return standings
 
@@ -162,8 +187,8 @@ def get_season_id(include_playoffs):
     cur_season_id = seasons_response.json()['SiteKit']['Parameters']['season_id']
     cur_season_type = [x['season_name'] for x in seasons_json if x['season_id'] == cur_season_id][0] # Get the season type (preseason, regular season, playoffs) for the current season ID.
 
-    # If we're in preseason, return the next season ID.
-    if 'Preseason' in cur_season_type: # TODO: validate that this will not cause issues trying to show regular season standings during preseason.
+    # If we're in preseason, return the next season ID. Note that both Preseason and Pre-Season appear in valid season names.
+    if 'Preseason' in cur_season_type or 'Pre-Season' in cur_season_type: # TODO: validate that this will not cause issues trying to show regular season standings during preseason.
         return int(cur_season_id) + 1
         
     # If we're in playoffs and include_playoffs is False, return the previous season ID.
