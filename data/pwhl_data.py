@@ -6,7 +6,7 @@ from datetime import timezone as tz
 import json
 
 
-key = '446521baf8c38984'  # API key for PWHL data. https://github.com/IsabelleLefebvre97/PWHL-Data-Reference
+key = '446521baf8c38984'  # API key for PWHL data. Source: https://github.com/IsabelleLefebvre97/PWHL-Data-Reference
 
 def get_games(date):
     """ Placeholder: Loads PWHL game data for the provided date.
@@ -28,10 +28,10 @@ def get_games(date):
     games_json = games_response.json()['SiteKit']['Scorebar']
 
     # For each game, build a dict recording current game details.
-    if games_json: # If games today. # TODO: validate what's returned when no games during range.
+    if games_json: # If games today.
         for game in games_json:
             if game['SeasonID'] != str(cur_season_id) or game['Date'] != date.strftime('%Y-%m-%d'):
-                continue    # Skip games not in current season or not on the requested date.
+                continue # Skip games not in current season or not on the requested date.
             
             # Append the dict to the games list.
             games.append({
@@ -174,10 +174,6 @@ def get_season_id(include_playoffs):
         int: current season ID.
     """
 
-    # Note the current datetime.
-    cur_datetime = dt.today().astimezone()
-    cur_date = dt.today().astimezone().date()
-
     # Call the PWHL seasons API and store the JSON results.
     url = f'https://lscluster.hockeytech.com/feed/index.php?client_code=pwhl&key={key}&feed=modulekit&view=seasons'
     seasons_response = session.get(url=url)
@@ -188,7 +184,7 @@ def get_season_id(include_playoffs):
     cur_season_type = [x['season_name'] for x in seasons_json if x['season_id'] == cur_season_id][0] # Get the season type (preseason, regular season, playoffs) for the current season ID.
 
     # If we're in preseason, return the next season ID. Note that both Preseason and Pre-Season appear in valid season names.
-    if 'Preseason' in cur_season_type or 'Pre-Season' in cur_season_type: # TODO: validate that this will not cause issues trying to show regular season standings during preseason.
+    if 'Preseason' in cur_season_type or 'Pre-Season' in cur_season_type:
         return int(cur_season_id) + 1
         
     # If we're in playoffs and include_playoffs is False, return the previous season ID.
