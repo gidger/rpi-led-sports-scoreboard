@@ -124,7 +124,8 @@ scene_settings:
       highlight_fav_teams: True
       colour_sidebar: True
       display_for:
-        - league
+        - conference
+        # - league
 
   # Basketball - NBA, WNBA.
   nba:
